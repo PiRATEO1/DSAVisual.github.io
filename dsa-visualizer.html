@@ -1,0 +1,3585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Visualizer - Learn Data Structures & Algorithms</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        body.light-mode {
+            --bg-dark: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .theme-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            margin-left: 1rem;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        body.light-mode .theme-toggle {
+            background: #fff;
+        }
+
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .visualization-container {
+            background: #0a0a1a;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            min-height: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-success {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: white;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 0.5rem 0;
+        }
+
+        .input-group label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .input-group input, .input-group select {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .code-container {
+            background: #1a1a2e;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .code-header {
+            background: #16213e;
+            padding: 0.8rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .code-tab {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .code-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .copy-btn:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        pre {
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        code {
+            color: #e2e8f0;
+        }
+
+        .keyword { color: #c084fc; }
+        .function { color: #60a5fa; }
+        .string { color: #4ade80; }
+        .number { color: #fb923c; }
+        .comment { color: #64748b; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-box {
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+        }
+
+        .info-box.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-left-color: var(--accent);
+        }
+
+        .info-box.success {
+            background: rgba(16, 185, 129, 0.1);
+            border-left-color: var(--secondary);
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .stat-item {
+            background: var(--bg-dark);
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .algo-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .algo-info-item {
+            background: var(--bg-dark);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .algo-info-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.3rem;
+        }
+
+        .algo-info-value {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .array-container {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 1rem;
+        }
+
+        .array-element {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .array-element.default {
+            background: var(--primary);
+            color: white;
+        }
+
+        .array-element.highlight {
+            background: var(--accent);
+            color: #000;
+            transform: scale(1.1);
+        }
+
+        .array-element.comparing {
+            background: var(--danger);
+            color: white;
+            animation: pulse 0.5s ease infinite;
+        }
+
+        .array-element.sorted {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .array-element.accessed {
+            background: #8b5cf6;
+            color: white;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .array-index {
+            position: absolute;
+            bottom: -20px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .linked-list-container {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
+        .node {
+            display: flex;
+            align-items: center;
+        }
+
+        .node-box {
+            width: 60px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .node-pointer {
+            width: 30px;
+            height: 2px;
+            background: var(--text-secondary);
+            position: relative;
+        }
+
+        .node-pointer::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-left-color: var(--text-secondary);
+        }
+
+        .node-pointer.null {
+            background: transparent;
+        }
+
+        .node-pointer.null::after {
+            border-left-color: var(--danger);
+        }
+
+        .stack-container, .queue-container {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 1rem;
+            min-height: 150px;
+            align-items: flex-end;
+        }
+
+        .stack-container {
+            flex-direction: column-reverse;
+        }
+
+        .stack-element, .queue-element {
+            width: 80px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .stack-element {
+            background: linear-gradient(135deg, var(--primary), #818cf8);
+            color: white;
+        }
+
+        .queue-element {
+            background: linear-gradient(135deg, var(--secondary), #34d399);
+            color: white;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+            padding: 0.8rem;
+            background: var(--bg-dark);
+            border-radius: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .quiz-question {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .quiz-option {
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            background: var(--bg-dark);
+            border-color: var(--primary);
+        }
+
+        .quiz-option.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .quiz-option.correct {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--secondary);
+        }
+
+        .quiz-option.incorrect {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--danger);
+        }
+
+        .progress-container {
+            background: var(--bg-dark);
+            border-radius: 10px;
+            height: 10px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .speed-slider {
+            width: 150px;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border);
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">DSA</div>
+                <span>DSA Visualizer</span>
+            </div>
+            <div class="nav-links">
+                <div class="nav-link active" data-section="home">Home</div>
+                <div class="nav-link" data-section="arrays">Arrays</div>
+                <div class="nav-link" data-section="linkedlist">Linked List</div>
+                <div class="nav-link" data-section="stack">Stack</div>
+                <div class="nav-link" data-section="queue">Queue</div>
+                <div class="nav-link" data-section="tree">Tree</div>
+                <div class="nav-link" data-section="graph">Graph</div>
+                <div class="nav-link" data-section="heap">Heap</div>
+                <div class="nav-link" data-section="hash">Hash Table</div>
+                <div class="nav-link" data-section="sorting">Sorting</div>
+                <div class="nav-link" data-section="searching">Searching</div>
+                <div class="nav-link" data-section="quiz">Quiz</div>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Mode">
+                <span class="theme-icon">☀️</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <section id="home" class="section active">
+            <div class="hero">
+                <h1>Learn Data Structures & Algorithms</h1>
+                <p>Interactive visualizations to help you understand DSA concepts in multiple programming languages</p>
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="showSection('arrays')">Get Started</button>
+                </div>
+            </div>
+
+            <div class="grid-3">
+                <div class="card" onclick="showSection('arrays')">
+                    <div class="card-title">Arrays</div>
+                    <p>Learn about sequential data storage with O(1) access time</p>
+                </div>
+                <div class="card" onclick="showSection('linkedlist')">
+                    <div class="card-title">Linked Lists</div>
+                    <p>Understand dynamic memory allocation with pointers</p>
+                </div>
+                <div class="card" onclick="showSection('stack')">
+                    <div class="card-title">Stacks</div>
+                    <p>LIFO data structure with push and pop operations</p>
+                </div>
+                <div class="card" onclick="showSection('queue')">
+                    <div class="card-title">Queues</div>
+                    <p>FIFO data structure for scheduling and processing</p>
+                </div>
+                <div class="card" onclick="showSection('tree')">
+                    <div class="card-title">Trees</div>
+                    <p>Hierarchical data structures for efficient searching</p>
+                </div>
+                <div class="card" onclick="showSection('graph')">
+                    <div class="card-title">Graphs</div>
+                    <p>Network structures with nodes and edges</p>
+                </div>
+                <div class="card" onclick="showSection('heap')">
+                    <div class="card-title">Heaps</div>
+                    <p>Priority queue implementation with heap property</p>
+                </div>
+                <div class="card" onclick="showSection('hash')">
+                    <div class="card-title">Hash Tables</div>
+                    <p>Key-value storage with O(1) average access</p>
+                </div>
+                <div class="card" onclick="showSection('sorting')">
+                    <div class="card-title">Sorting</div>
+                    <p>Visualize different sorting algorithms</p>
+                </div>
+                <div class="card" onclick="showSection('searching')">
+                    <div class="card-title">Searching</div>
+                    <p>Learn linear and binary search algorithms</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="arrays" class="section">
+            <h2 class="section-title">Arrays</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">What is an Array?</h3>
+                    <p>An array is a collection of items stored at contiguous memory locations. Elements can be accessed randomly by index.</p>
+                    <div class="algo-info">
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Access Time</div>
+                            <div class="algo-info-value">O(1)</div>
+                        </div>
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Search Time</div>
+                            <div class="algo-info-value">O(n)</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <strong>Key Points:</strong>
+                        <ul style="margin-left: 1rem; margin-top: 0.5rem;">
+                            <li>Fixed size in most languages</li>
+                            <li>Random access by index</li>
+                            <li>Elements stored consecutively</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Interactive Array Visualizer</h3>
+                    <div class="visualization-container">
+                        <div class="array-container" id="arrayVisualizer"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="generateRandomArray()">Generate Random</button>
+                        <button class="btn btn-secondary" onclick="clearArray()">Clear</button>
+                        <button class="btn btn-success" onclick="accessRandomElement()">Access Random</button>
+                        <button class="btn btn-accent" onclick="searchElement()">Search</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Value:</label>
+                        <input type="number" id="arrayValue" placeholder="Enter value" style="width: 120px;">
+                        <button class="btn btn-primary" onclick="addArrayElement()">Add</button>
+                        <button class="btn btn-danger" onclick="removeArrayElement()">Remove</button>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <span class="stat-label">Size:</span>
+                            <span class="stat-value" id="arraySize">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Last Operation:</span>
+                            <span class="stat-value" id="arrayOperation">None</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <div class="code-tabs">
+                        <div class="code-tab active" data-target="array-python">Python</div>
+                        <div class="code-tab" data-target="array-java">Java</div>
+                        <div class="code-tab" data-target="array-cpp">C++</div>
+                        <div class="code-tab" data-target="array-js">JavaScript</div>
+                    </div>
+                </div>
+                <pre id="array-python"><code><span class="comment"># Python Array Implementation</span>
+<span class="keyword">class</span> <span class="function">Array</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, size):
+        self.array = [<span class="number">0</span>] * size
+        self.size = <span class="number">0</span>
+
+    <span class="keyword">def</span> <span class="function">insert</span>(self, index, value):
+        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(self.size, index, -<span class="number">1</span>):
+            self.array[i] = self.array[i - <span class="number">1</span>]
+        self.array[index] = value
+        self.size += <span class="number">1</span>
+
+    <span class="keyword">def</span> <span class="function">access</span>(self, index):
+        <span class="keyword">return</span> self.array[index]
+
+<span class="comment"># Usage</span>
+arr = <span class="function">Array</span>(<span class="number">5</span>)
+arr.<span class="function">insert</span>(<span class="number">0</span>, <span class="number">10</span>)
+<span class="function">print</span>(arr.<span class="function">access</span>(<span class="number">0</span>))</code></pre>
+                <pre id="array-java" style="display:none;"><code><span class="comment">// Java Array Implementation</span>
+<span class="keyword">public class</span> <span class="function">Array</span> {
+    <span class="keyword">private int</span>[] array;
+    <span class="keyword">private int</span> size;
+
+    <span class="keyword">public</span> <span class="function">Array</span>(<span class="keyword">int</span> capacity) {
+        array = <span class="keyword">new int</span>[capacity];
+        size = <span class="number">0</span>;
+    }
+
+    <span class="keyword">public void</span> <span class="function">insert</span>(<span class="keyword">int</span> index, <span class="keyword">int</span> value) {
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = size; i > index; i--) {
+            array[i] = array[i - <span class="number">1</span>];
+        }
+        array[index] = value;
+        size++;
+    }
+
+    <span class="keyword">public int</span> <span class="function">access</span>(<span class="keyword">int</span> index) {
+        <span class="keyword">return</span> array[index];
+    }
+}</code></pre>
+                <pre id="array-cpp" style="display:none;"><code><span class="comment">// C++ Array Implementation</span>
+<span class="keyword">#include</span> <span class="string"><iostream></span>
+<span class="keyword">#include</span> <span class="string"><vector></span>
+<span class="keyword">using namespace</span> std;
+
+<span class="keyword">class</span> <span class="function">Array</span> {
+<span class="keyword">private</span>:
+    vector<int> arr;
+<span class="keyword">public</span>:
+    <span class="function">Array</span>(<span class="keyword">int</span> cap) {
+        arr.resize(cap);
+    }
+
+    <span class="keyword">void</span> <span class="function">insert</span>(<span class="keyword">int</span> index, <span class="keyword">int</span> value) {
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = arr.size(); i > index; i--) {
+            arr[i] = arr[i - <span class="number">1</span>];
+        }
+        arr[index] = value;
+    }
+
+    <span class="keyword">int</span> <span class="function">access</span>(<span class="keyword">int</span> index) {
+        <span class="keyword">return</span> arr[index];
+    }
+};</code></pre>
+                <pre id="array-js" style="display:none;"><code><span class="comment">// JavaScript Array Implementation</span>
+<span class="keyword">class</span> <span class="function">Array</span> {
+    <span class="function">constructor</span>(capacity) {
+        <span class="keyword">this</span>.array = <span class="keyword">new</span> Array(capacity).fill(<span class="number">0</span>);
+        <span class="keyword">this</span>.size = <span class="number">0</span>;
+    }
+
+    <span class="function">insert</span>(index, value) {
+        <span class="keyword">for</span> (let i = <span class="keyword">this</span>.size; i > index; i--) {
+            <span class="keyword">this</span>.array[i] = <span class="keyword">this</span>.array[i - <span class="number">1</span>];
+        }
+        <span class="keyword">this</span>.array[index] = value;
+        <span class="keyword">this</span>.size++;
+    }
+
+    <span class="function">access</span>(index) {
+        <span class="keyword">return</span> <span class="keyword">this</span>.array[index];
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="linkedlist" class="section">
+            <h2 class="section-title">Linked Lists</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">What is a Linked List?</h3>
+                    <p>A linked list is a linear data structure where elements are stored in nodes. Each node contains data and a reference to the next node.</p>
+                    <div class="algo-info">
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Insert at Head</div>
+                            <div class="algo-info-value">O(1)</div>
+                        </div>
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Access Time</div>
+                            <div class="algo-info-value">O(n)</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <strong>Advantages:</strong>
+                        <ul style="margin-left: 1rem; margin-top: 0.5rem;">
+                            <li>Dynamic size</li>
+                            <li>Easy insertion/deletion</li>
+                            <li>No memory wastage</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Interactive Linked List Visualizer</h3>
+                    <div class="visualization-container">
+                        <div class="linked-list-container" id="linkedListVisualizer"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="insertAtHead()">Insert at Head</button>
+                        <button class="btn btn-primary" onclick="insertAtTail()">Insert at Tail</button>
+                        <button class="btn btn-danger" onclick="deleteFromHead()">Delete from Head</button>
+                        <button class="btn btn-secondary" onclick="clearLinkedList()">Clear</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Value:</label>
+                        <input type="number" id="linkedListValue" placeholder="Enter value" style="width: 120px;">
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <span class="stat-label">Length:</span>
+                            <span class="stat-value" id="linkedListLength">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <div class="code-tabs">
+                        <div class="code-tab active" data-target="ll-python">Python</div>
+                        <div class="code-tab" data-target="ll-java">Java</div>
+                        <div class="code-tab" data-target="ll-cpp">C++</div>
+                        <div class="code-tab" data-target="ll-js">JavaScript</div>
+                    </div>
+                </div>
+                <pre id="ll-python"><code><span class="comment"># Python Linked List</span>
+<span class="keyword">class</span> <span class="function">Node</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, data):
+        self.data = data
+        self.next = <span class="keyword">None</span>
+
+<span class="keyword">class</span> <span class="function">LinkedList</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.head = <span class="keyword">None</span>
+
+    <span class="keyword">def</span> <span class="function">insert_at_head</span>(self, data):
+        new_node = <span class="function">Node</span>(data)
+        new_node.next = self.head
+        self.head = new_node</code></pre>
+                <pre id="ll-java" style="display:none;"><code><span class="comment">// Java Linked List</span>
+<span class="keyword">class</span> <span class="function">Node</span> {
+    <span class="keyword">int</span> data;
+    <span class="function">Node</span> next;
+    <span class="function">Node</span>(<span class="keyword">int</span> data) {
+        <span class="keyword">this</span>.data = data;
+    }
+}
+
+<span class="keyword">public class</span> <span class="function">LinkedList</span> {
+    <span class="keyword">private</span> <span class="function">Node</span> head;
+
+    <span class="keyword">public void</span> <span class="function">insertAtHead</span>(<span class="keyword">int</span> data) {
+        <span class="function">Node</span> newNode = <span class="keyword">new</span> <span class="function">Node</span>(data);
+        newNode.next = head;
+        head = newNode;
+    }
+}</code></pre>
+                <pre id="ll-cpp" style="display:none;"><code><span class="comment">// C++ Linked List</span>
+<span class="keyword">struct</span> <span class="function">Node</span> {
+    <span class="keyword">int</span> data;
+    <span class="function">Node</span>* next;
+    <span class="function">Node</span>(<span class="keyword">int</span> val) : data(val), next(<span class="keyword">nullptr</span>) {}
+};
+
+<span class="keyword">class</span> <span class="function">LinkedList</span> {
+<span class="keyword">private</span>:
+    <span class="function">Node</span>* head;
+<span class="keyword">public</span>:
+    <span class="function">LinkedList</span>() : head(<span class="keyword">nullptr</span>) {}
+    <span class="keyword">void</span> <span class="function">insertAtHead</span>(<span class="keyword">int</span> data) {
+        <span class="function">Node</span>* newNode = <span class="keyword">new</span> <span class="function">Node</span>(data);
+        newNode->next = head;
+        head = newNode;
+    }
+};</code></pre>
+                <pre id="ll-js" style="display:none;"><code><span class="comment">// JavaScript Linked List</span>
+<span class="keyword">class</span> <span class="function">Node</span> {
+    <span class="function">constructor</span>(data) {
+        <span class="keyword">this</span>.data = data;
+        <span class="keyword">this</span>.next = <span class="keyword">null</span>;
+    }
+}
+
+<span class="keyword">class</span> <span class="function">LinkedList</span> {
+    <span class="function">constructor</span>() {
+        <span class="keyword">this</span>.head = <span class="keyword">null</span>;
+    }
+
+    <span class="function">insertAtHead</span>(data) {
+        <span class="keyword">const</span> newNode = <span class="keyword">new</span> <span class="function">Node</span>(data);
+        newNode.next = <span class="keyword">this</span>.head;
+        <span class="keyword">this</span>.head = newNode;
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="stack" class="section">
+            <h2 class="section-title">Stacks</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">What is a Stack?</h3>
+                    <p>A stack is a LIFO (Last In First Out) data structure where elements are added and removed from the top.</p>
+                    <div class="algo-info">
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Push</div>
+                            <div class="algo-info-value">O(1)</div>
+                        </div>
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Pop</div>
+                            <div class="algo-info-value">O(1)</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <strong>Applications:</strong>
+                        <ul style="margin-left: 1rem; margin-top: 0.5rem;">
+                            <li>Function call management</li>
+                            <li>Expression evaluation</li>
+                            <li>Backtracking</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Interactive Stack Visualizer</h3>
+                    <div class="visualization-container">
+                        <div class="stack-container" id="stackVisualizer"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="pushStack()">Push</button>
+                        <button class="btn btn-danger" onclick="popStack()">Pop</button>
+                        <button class="btn btn-secondary" onclick="peekStack()">Peek</button>
+                        <button class="btn btn-accent" onclick="clearStack()">Clear</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Value:</label>
+                        <input type="number" id="stackValue" placeholder="Enter value" style="width: 120px;">
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <span class="stat-label">Size:</span>
+                            <span class="stat-value" id="stackSize">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Top:</span>
+                            <span class="stat-value" id="stackTop">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <div class="code-tabs">
+                        <div class="code-tab active" data-target="stack-python">Python</div>
+                        <div class="code-tab" data-target="stack-java">Java</div>
+                        <div class="code-tab" data-target="stack-cpp">C++</div>
+                        <div class="code-tab" data-target="stack-js">JavaScript</div>
+                    </div>
+                </div>
+                <pre id="stack-python"><code><span class="comment"># Python Stack</span>
+<span class="keyword">class</span> <span class="function">Stack</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.stack = []
+
+    <span class="keyword">def</span> <span class="function">push</span>(self, item):
+        self.stack.<span class="function">append</span>(item)
+
+    <span class="keyword">def</span> <span class="function">pop</span>(self):
+        <span class="keyword">if not</span> self.<span class="function">is_empty</span>():
+            <span class="keyword">return</span> self.stack.<span class="function">pop</span>()
+
+    <span class="keyword">def</span> <span class="function">peek</span>(self):
+        <span class="keyword">return</span> self.stack[-<span class="number">1</span>] <span class="keyword">if not</span> self.<span class="function">is_empty</span>() <span class="keyword">else None</span></code></pre>
+                <pre id="stack-java" style="display:none;"><code><span class="comment">// Java Stack</span>
+<span class="keyword">import</span> java.util.ArrayList;
+
+<span class="keyword">public class</span> <span class="function">Stack</span> {
+    <span class="keyword">private</span> ArrayList<Integer> stack;
+
+    <span class="keyword">public</span> <span class="function">Stack</span>() {
+        stack = <span class="keyword">new</span> ArrayList<>();
+    }
+
+    <span class="keyword">public void</span> <span class="function">push</span>(<span class="keyword">int</span> item) {
+        stack.<span class="function">add</span>(item);
+    }
+
+    <span class="keyword">public int</span> <span class="function">pop</span>() {
+        <span class="keyword">if</span> (!stack.isEmpty()) {
+            <span class="keyword">return</span> stack.remove(stack.size() - <span class="number">1</span>);
+        }
+        <span class="keyword">return</span> -<span class="number">1</span>;
+    }
+}</code></pre>
+                <pre id="stack-cpp" style="display:none;"><code><span class="comment">// C++ Stack</span>
+<span class="keyword">#include</span> <span class="string"><vector></span>
+<span class="keyword">using namespace</span> std;
+
+<span class="keyword">class</span> <span class="function">Stack</span> {
+<span class="keyword">private</span>:
+    vector<int> stack;
+<span class="keyword">public</span>:
+    <span class="keyword">void</span> <span class="function">push</span>(<span class="keyword">int</span> item) {
+        stack.push_back(item);
+    }
+
+    <span class="keyword">int</span> <span class="function">pop</span>() {
+        <span class="keyword">if</span> (!stack.empty()) {
+            <span class="keyword">int</span> top = stack.back();
+            stack.pop_back();
+            <span class="keyword">return</span> top;
+        }
+        <span class="keyword">return</span> -<span class="number">1</span>;
+    }
+};</code></pre>
+                <pre id="stack-js" style="display:none;"><code><span class="comment">// JavaScript Stack</span>
+<span class="keyword">class</span> <span class="function">Stack</span> {
+    <span class="function">constructor</span>() {
+        <span class="keyword">this</span>.stack = [];
+    }
+
+    <span class="function">push</span>(item) {
+        <span class="keyword">this</span>.stack.<span class="function">push</span>(item);
+    }
+
+    <span class="function">pop</span>() {
+        <span class="keyword">return</span> <span class="keyword">this</span>.stack.<span class="function">pop</span>();
+    }
+
+    <span class="function">peek</span>() {
+        <span class="keyword">return</span> <span class="keyword">this</span>.stack[<span class="keyword">this</span>.stack.length - <span class="number">1</span>];
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="queue" class="section">
+            <h2 class="section-title">Queues</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">What is a Queue?</h3>
+                    <p>A queue is a FIFO (First In First Out) data structure where elements are added at the rear and removed from the front.</p>
+                    <div class="algo-info">
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Enqueue</div>
+                            <div class="algo-info-value">O(1)</div>
+                        </div>
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Dequeue</div>
+                            <div class="algo-info-value">O(1)</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <strong>Applications:</strong>
+                        <ul style="margin-left: 1rem; margin-top: 0.5rem;">
+                            <li>Task scheduling</li>
+                            <li>Breadth-first search</li>
+                            <li>Print job management</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Interactive Queue Visualizer</h3>
+                    <div class="visualization-container">
+                        <div class="queue-container" id="queueVisualizer"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="enqueue()">Enqueue</button>
+                        <button class="btn btn-danger" onclick="dequeue()">Dequeue</button>
+                        <button class="btn btn-secondary" onclick="peekQueue()">Front</button>
+                        <button class="btn btn-accent" onclick="clearQueue()">Clear</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Value:</label>
+                        <input type="number" id="queueValue" placeholder="Enter value" style="width: 120px;">
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <span class="stat-label">Size:</span>
+                            <span class="stat-value" id="queueSize">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <div class="code-tabs">
+                        <div class="code-tab active" data-target="queue-python">Python</div>
+                        <div class="code-tab" data-target="queue-java">Java</div>
+                        <div class="code-tab" data-target="queue-cpp">C++</div>
+                        <div class="code-tab" data-target="queue-js">JavaScript</div>
+                    </div>
+                </div>
+                <pre id="queue-python"><code><span class="comment"># Python Queue</span>
+<span class="keyword">from</span> collections <span class="keyword">import</span> deque
+
+<span class="keyword">class</span> <span class="function">Queue</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.queue = <span class="function">deque</span>()
+
+    <span class="keyword">def</span> <span class="function">enqueue</span>(self, item):
+        self.queue.<span class="function">append</span>(item)
+
+    <span class="keyword">def</span> <span class="function">dequeue</span>(self):
+        <span class="keyword">if not</span> self.<span class="function">is_empty</span>():
+            <span class="keyword">return</span> self.queue.<span class="function">popleft</span>()
+
+    <span class="keyword">def</span> <span class="function">front</span>(self):
+        <span class="keyword">return</span> self.queue[<span class="number">0</span>]</code></pre>
+                <pre id="queue-java" style="display:none;"><code><span class="comment">// Java Queue</span>
+<span class="keyword">import</span> java.util.ArrayList;
+
+<span class="keyword">public class</span> <span class="function">Queue</span> {
+    <span class="keyword">private</span> ArrayList<Integer> queue;
+    <span class="keyword">private int</span> front;
+
+    <span class="keyword">public</span> <span class="function">Queue</span>() {
+        queue = <span class="keyword">new</span> ArrayList<>();
+        front = <span class="number">0</span>;
+    }
+
+    <span class="keyword">public void</span> <span class="function">enqueue</span>(<span class="keyword">int</span> item) {
+        queue.<span class="function">add</span>(item);
+    }
+
+    <span class="keyword">public int</span> <span class="function">dequeue</span>() {
+        <span class="keyword">if</span> (!<span class="function">isEmpty</span>()) {
+            <span class="keyword">return</span> queue.<span class="function">remove</span>(front);
+        }
+        <span class="keyword">return</span> -<span class="number">1</span>;
+    }
+}</code></pre>
+                <pre id="queue-cpp" style="display:none;"><code><span class="comment">// C++ Queue</span>
+<span class="keyword">#include</span> <span class="string"><queue></span>
+<span class="keyword">using namespace</span> std;
+
+<span class="keyword">class</span> <span class="function">Queue</span> {
+<span class="keyword">private</span>:
+    queue<int> q;
+<span class="keyword">public</span>:
+    <span class="keyword">void</span> <span class="function">enqueue</span>(<span class="keyword">int</span> item) {
+        q.push(item);
+    }
+
+    <span class="keyword">int</span> <span class="function">dequeue</span>() {
+        <span class="keyword">if</span> (!q.empty()) {
+            <span class="keyword">int</span> item = q.front();
+            q.pop();
+            <span class="keyword">return</span> item;
+        }
+        <span class="keyword">return</span> -<span class="number">1</span>;
+    }
+};</code></pre>
+                <pre id="queue-js" style="display:none;"><code><span class="comment">// JavaScript Queue</span>
+<span class="keyword">class</span> <span class="function">Queue</span> {
+    <span class="function">constructor</span>() {
+        <span class="keyword">this</span>.queue = [];
+    }
+
+    <span class="function">enqueue</span>(item) {
+        <span class="keyword">this</span>.queue.<span class="function">push</span>(item);
+    }
+
+    <span class="function">dequeue</span>() {
+        <span class="keyword">return</span> <span class="keyword">this</span>.queue.<span class="function">shift</span>();
+    }
+
+    <span class="function">front</span>() {
+        <span class="keyword">return</span> <span class="keyword">this</span>.queue[<span class="number">0</span>];
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Tree Section -->
+        <section id="tree" class="section">
+            <h2 class="section-title">Binary Trees</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">What is a Binary Tree?</h3>
+                    <p>A binary tree is a hierarchical data structure where each node has at most two children: left and right.</p>
+                    <div class="algo-info">
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Insert</div>
+                            <div class="algo-info-value">O(log n)</div>
+                        </div>
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Search</div>
+                            <div class="algo-info-value">O(log n)</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <strong>Types:</strong>
+                        <ul style="margin-left: 1rem; margin-top: 0.5rem;">
+                            <li><strong>Full Binary Tree:</strong> Each node has 0 or 2 children</li>
+                            <li><strong>Complete Binary Tree:</strong> All levels filled</li>
+                            <li><strong>BST:</strong> Left &lt; Root &lt; Right</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Interactive Tree Visualizer</h3>
+                    <div class="visualization-container">
+                        <div id="treeVisualizer" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px; padding: 20px;"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="insertTreeNode()">Insert Node</button>
+                        <button class="btn btn-danger" onclick="deleteTreeNode()">Delete Node</button>
+                        <button class="btn btn-secondary" onclick="traverseInorder()">In-order</button>
+                        <button class="btn btn-secondary" onclick="traversePreorder()">Pre-order</button>
+                        <button class="btn btn-accent" onclick="clearTree()">Clear</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Value:</label>
+                        <input type="number" id="treeValue" placeholder="Enter value" style="width: 120px;">
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <span class="stat-label">Nodes:</span>
+                            <span class="stat-value" id="treeNodeCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Traversal:</span>
+                            <span class="stat-value" id="treeTraversal">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Graph Section -->
+        <section id="graph" class="section">
+            <h2 class="section-title">Graphs</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">What is a Graph?</h3>
+                    <p>A graph consists of vertices (nodes) connected by edges. Used to represent networks.</p>
+                    <div class="algo-info">
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Add Node</div>
+                            <div class="algo-info-value">O(1)</div>
+                        </div>
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Add Edge</div>
+                            <div class="algo-info-value">O(1)</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <strong>Graph Types:</strong>
+                        <ul style="margin-left: 1rem; margin-top: 0.5rem;">
+                            <li><strong>Undirected:</strong> Edges go both ways</li>
+                            <li><strong>Directed:</strong> Edges have direction</li>
+                            <li><strong>Weighted:</strong> Edges have weights</li>
+                        </ul>
+                    </div>
+                    <div class="info-box success">
+                        <strong>BFS:</strong> Level by level traversal (shortest path)
+                    </div>
+                    <div class="info-box warning">
+                        <strong>DFS:</strong> Depth first traversal (cycles, paths)
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Interactive Graph Visualizer</h3>
+                    <div class="visualization-container" style="height: 350px; position: relative;">
+                        <canvas id="graphCanvas" width="500" height="320" style="width: 100%; height: 100%; border-radius: 8px;"></canvas>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="addGraphNode()">Add Node</button>
+                        <button class="btn btn-primary" onclick="addGraphEdge()">Add Edge</button>
+                        <button class="btn btn-success" onclick="runBFS()">BFS</button>
+                        <button class="btn btn-accent" onclick="runDFS()">DFS</button>
+                        <button class="btn btn-danger" onclick="clearGraph()">Clear</button>
+                    </div>
+                    <div class="input-group">
+                        <label>From:</label>
+                        <input type="number" id="graphFrom" placeholder="Node" style="width: 70px;">
+                        <label>To:</label>
+                        <input type="number" id="graphTo" placeholder="Node" style="width: 70px;">
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <span class="stat-label">Nodes:</span>
+                            <span class="stat-value" id="graphNodeCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Edges:</span>
+                            <span class="stat-value" id="graphEdgeCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Traversal:</span>
+                            <span class="stat-value" id="graphTraversal">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <div class="code-tabs">
+                        <div class="code-tab active" data-target="graph-python">Python</div>
+                        <div class="code-tab" data-target="graph-java">Java</div>
+                        <div class="code-tab" data-target="graph-cpp">C++</div>
+                        <div class="code-tab" data-target="graph-js">JavaScript</div>
+                    </div>
+                </div>
+                <pre id="graph-python"><code><span class="comment"># Python Graph (Adjacency List)</span>
+<span class="keyword">from</span> collections <span class="keyword">import</span> deque
+
+<span class="keyword">class</span> <span class="function">Graph</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.adj_list = {}
+
+    <span class="keyword">def</span> <span class="function">add_node</span>(self, node):
+        <span class="keyword">if</span> node <span class="keyword">not in</span> self.adj_list:
+            self.adj_list[node] = []
+
+    <span class="keyword">def</span> <span class="function">add_edge</span>(self, node1, node2):
+        self.<span class="function">add_node</span>(node1)
+        self.<span class="function">add_node</span>(node2)
+        self.adj_list[node1].append(node2)
+        self.adj_list[node2].append(node1)
+
+    <span class="keyword">def</span> <span class="function">bfs</span>(self, start):
+        visited = <span class="function">set</span>()
+        queue = <span class="function">deque</span>([start])
+        visited.<span class="function">add</span>(start)
+        result = []
+        <span class="keyword">while</span> queue:
+            node = queue.popleft()
+            result.append(node)
+            <span class="keyword">for</span> neighbor <span class="keyword">in</span> self.adj_list[node]:
+                <span class="keyword">if</span> neighbor <span class="keyword">not in</span> visited:
+                    visited.<span class="function">add</span>(neighbor)
+                    queue.append(neighbor)
+        <span class="keyword">return</span> result
+
+    <span class="keyword">def</span> <span class="function">dfs</span>(self, start):
+        visited = <span class="function">set</span>()
+        result = []
+        <span class="keyword">def</span> <span class="function">dfs_helper</span>(node):
+            visited.<span class="function">add</span>(node)
+            result.append(node)
+            <span class="keyword">for</span> neighbor <span class="keyword">in</span> self.adj_list[node]:
+                <span class="keyword">if</span> neighbor <span class="keyword">not in</span> visited:
+                    <span class="function">dfs_helper</span>(neighbor)
+        <span class="function">dfs_helper</span>(start)
+        <span class="keyword">return</span> result</code></pre>
+                <pre id="graph-java" style="display:none;"><code><span class="comment">// Java Graph (Adjacency List)</span>
+<span class="keyword">import</span> java.util.*;
+
+<span class="keyword">public class</span> <span class="function">Graph</span> {
+    <span class="keyword">private</span> Map&lt;Integer, List&lt;Integer&gt;&gt; adjList;
+
+    <span class="keyword">public</span> <span class="function">Graph</span>() {
+        adjList = <span class="keyword">new</span> HashMap&lt;&gt;();
+    }
+
+    <span class="keyword">public void</span> <span class="function">addNode</span>(<span class="keyword">int</span> node) {
+        adjList.putIfAbsent(node, <span class="keyword">new</span> ArrayList&lt;&gt;());
+    }
+
+    <span class="keyword">public void</span> <span class="function">addEdge</span>(<span class="keyword">int</span> node1, <span class="keyword">int</span> node2) {
+        <span class="function">addNode</span>(node1);
+        <span class="function">addNode</span>(node2);
+        adjList.get(node1).add(node2);
+        adjList.get(node2).add(node1);
+    }
+
+    <span class="keyword">public List&lt;Integer&gt;</span> <span class="function">bfs</span>(<span class="keyword">int</span> start) {
+        Set&lt;Integer&gt; visited = <span class="keyword">new</span> HashSet&lt;&gt;();
+        Queue&lt;Integer&gt; queue = <span class="keyword">new</span> LinkedList&lt;&gt;();
+        List&lt;Integer&gt; result = <span class="keyword">new</span> ArrayList&lt;&gt;();
+        visited.add(start);
+        queue.offer(start);
+        <span class="keyword">while</span> (!queue.isEmpty()) {
+            <span class="keyword">int</span> node = queue.poll();
+            result.add(node);
+            <span class="keyword">for</span> (<span class="keyword">int</span> neighbor : adjList.get(node)) {
+                <span class="keyword">if</span> (!visited.contains(neighbor)) {
+                    visited.add(neighbor);
+                    queue.offer(neighbor);
+                }
+            }
+        }
+        <span class="keyword">return</span> result;
+    }
+
+    <span class="keyword">public List&lt;Integer&gt;</span> <span class="function">dfs</span>(<span class="keyword">int</span> start) {
+        Set&lt;Integer&gt; visited = <span class="keyword">new</span> HashSet&lt;&gt;();
+        List&lt;Integer&gt; result = <span class="keyword">new</span> ArrayList&lt;&gt;();
+        <span class="function">dfsHelper</span>(start, visited, result);
+        <span class="keyword">return</span> result;
+    }
+
+    <span class="keyword">private void</span> <span class="function">dfsHelper</span>(<span class="keyword">int</span> node, Set&lt;Integer&gt; visited, List&lt;Integer&gt; result) {
+        visited.add(node);
+        result.add(node);
+        <span class="keyword">for</span> (<span class="keyword">int</span> neighbor : adjList.get(node)) {
+            <span class="keyword">if</span> (!visited.contains(neighbor)) {
+                <span class="function">dfsHelper</span>(neighbor, visited, result);
+            }
+        }
+    }
+}</code></pre>
+                <pre id="graph-cpp" style="display:none;"><code><span class="comment">// C++ Graph (Adjacency List)</span>
+<span class="keyword">#include</span> <span class="string">&lt;iostream&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;unordered_map&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;vector&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;queue&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;set&gt;</span>
+<span class="keyword">using namespace</span> std;
+
+<span class="keyword">class</span> <span class="function">Graph</span> {
+<span class="keyword">private</span>:
+    unordered_map&lt;int, vector&lt;int&gt;&gt; adjList;
+<span class="keyword">public</span>:
+    <span class="keyword">void</span> <span class="function">addNode</span>(<span class="keyword">int</span> node) {
+        adjList[node];
+    }
+
+    <span class="keyword">void</span> <span class="function">addEdge</span>(<span class="keyword">int</span> node1, <span class="keyword">int</span> node2) {
+        <span class="function">addNode</span>(node1);
+        <span class="function">addNode</span>(node2);
+        adjList[node1].push_back(node2);
+        adjList[node2].push_back(node1);
+    }
+
+    vector&lt;int&gt; <span class="function">bfs</span>(<span class="keyword">int</span> start) {
+        set&lt;int&gt; visited;
+        queue&lt;int&gt; q;
+        vector&lt;int&gt; result;
+        visited.insert(start);
+        q.push(start);
+        <span class="keyword">while</span> (!q.empty()) {
+            <span class="keyword">int</span> node = q.front();
+            q.pop();
+            result.push_back(node);
+            <span class="keyword">for</span> (<span class="keyword">int</span> neighbor : adjList[node]) {
+                <span class="keyword">if</span> (visited.find(neighbor) == visited.end()) {
+                    visited.insert(neighbor);
+                    q.push(neighbor);
+                }
+            }
+        }
+        <span class="keyword">return</span> result;
+    }
+};</code></pre>
+                <pre id="graph-js" style="display:none;"><code><span class="comment">// JavaScript Graph (Adjacency List)</span>
+<span class="keyword">class</span> <span class="function">Graph</span> {
+    <span class="function">constructor</span>() {
+        <span class="keyword">this</span>.adjList = <span class="keyword">new</span> Map();
+    }
+
+    <span class="function">addNode</span>(node) {
+        <span class="keyword">if</span> (!<span class="keyword">this</span>.adjList.has(node)) {
+            <span class="keyword">this</span>.adjList.set(node, []);
+        }
+    }
+
+    <span class="function">addEdge</span>(node1, node2) {
+        <span class="keyword">this</span>.<span class="function">addNode</span>(node1);
+        <span class="keyword">this</span>.<span class="function">addNode</span>(node2);
+        <span class="keyword">this</span>.adjList.get(node1).push(node2);
+        <span class="keyword">this</span>.adjList.get(node2).push(node1);
+    }
+
+    <span class="function">bfs</span>(start) {
+        <span class="keyword">const</span> visited = <span class="keyword">new</span> Set();
+        <span class="keyword">const</span> queue = [start];
+        <span class="keyword">const</span> result = [];
+        visited.add(start);
+        <span class="keyword">while</span> (queue.length > <span class="number">0</span>) {
+            <span class="keyword">const</span> node = queue.shift();
+            result.push(node);
+            <span class="keyword">for</span> (<span class="keyword">const</span> neighbor <span class="keyword">of</span> <span class="keyword">this</span>.adjList.get(node)) {
+                <span class="keyword">if</span> (!visited.has(neighbor)) {
+                    visited.add(neighbor);
+                    queue.push(neighbor);
+                }
+            }
+        }
+        <span class="keyword">return</span> result;
+    }
+
+    <span class="function">dfs</span>(start) {
+        <span class="keyword">const</span> visited = <span class="keyword">new</span> Set();
+        <span class="keyword">const</span> result = [];
+        <span class="keyword">const</span> dfsHelper = (node) => {
+            visited.add(node);
+            result.push(node);
+            <span class="keyword">for</span> (<span class="keyword">const</span> neighbor <span class="keyword">of</span> <span class="keyword">this</span>.adjList.get(node)) {
+                <span class="keyword">if</span> (!visited.has(neighbor)) {
+                    dfsHelper(neighbor);
+                }
+            }
+        };
+        dfsHelper(start);
+        <span class="keyword">return</span> result;
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Heap Section -->
+        <section id="heap" class="section">
+            <h2 class="section-title">Heaps (Priority Queue)</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">What is a Heap?</h3>
+                    <p>A heap is a complete binary tree that satisfies the heap property. Used to implement priority queues.</p>
+                    <div class="algo-info">
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Insert</div>
+                            <div class="algo-info-value">O(log n)</div>
+                        </div>
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Extract Max</div>
+                            <div class="algo-info-value">O(log n)</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <strong>Heap Types:</strong>
+                        <ul style="margin-left: 1rem; margin-top: 0.5rem;">
+                            <li><strong>Max Heap:</strong> Parent >= Children</li>
+                            <li><strong>Min Heap:</strong> Parent <= Children</li>
+                            <li>Used in Dijkstra's, Heap Sort</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Interactive Heap Visualizer</h3>
+                    <div class="visualization-container">
+                        <div id="heapVisualizer" style="display: flex; justify-content: center; align-items: flex-end; gap: 5px; padding: 20px; flex-wrap: wrap;"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="insertHeap()">Insert</button>
+                        <button class="btn btn-danger" onclick="extractMax()">Extract Max</button>
+                        <button class="btn btn-secondary" onclick="getMax()">Get Max</button>
+                        <button class="btn btn-accent" onclick="clearHeap()">Clear</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Value:</label>
+                        <input type="number" id="heapValue" placeholder="Enter value" style="width: 120px;">
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <span class="stat-label">Size:</span>
+                            <span class="stat-value" id="heapSize">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Max:</span>
+                            <span class="stat-value" id="heapMax">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hash Table Section -->
+        <section id="hash" class="section">
+            <h2 class="section-title">Hash Tables</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">What is a Hash Table?</h3>
+                    <p>A hash table stores key-value pairs and uses a hash function to compute an index into an array of buckets.</p>
+                    <div class="algo-info">
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Insert</div>
+                            <div class="algo-info-value">O(1) avg</div>
+                        </div>
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Search</div>
+                            <div class="algo-info-value">O(1) avg</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <strong>Key Concepts:</strong>
+                        <ul style="margin-left: 1rem; margin-top: 0.5rem;">
+                            <li><strong>Hash Function:</strong> Maps keys to indices</li>
+                            <li><strong>Collision:</strong> Two keys same index</li>
+                            <li><strong>Chaining:</strong> Linked list at each bucket</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Interactive Hash Table Visualizer</h3>
+                    <div class="visualization-container">
+                        <div id="hashVisualizer" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; padding: 20px;"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="insertHash()">Insert</button>
+                        <button class="btn btn-secondary" onclick="searchHash()">Search</button>
+                        <button class="btn btn-danger" onclick="deleteHash()">Delete</button>
+                        <button class="btn btn-accent" onclick="clearHash()">Clear</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Key:</label>
+                        <input type="text" id="hashKey" placeholder="Enter key" style="width: 100px;">
+                        <label>Value:</label>
+                        <input type="text" id="hashValue" placeholder="Enter value" style="width: 100px;">
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <span class="stat-label">Entries:</span>
+                            <span class="stat-value" id="hashCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Status:</span>
+                            <span class="stat-value" id="hashStatus">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sorting" class="section">
+            <h2 class="section-title">Sorting Algorithms</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">Sorting Visualizer</h3>
+                    <div class="visualization-container">
+                        <div class="array-container" id="sortingVisualizer" style="justify-content: flex-end; align-items: flex-end; height: 250px;"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="bubbleSort()">Bubble Sort</button>
+                        <button class="btn btn-primary" onclick="selectionSort()">Selection Sort</button>
+                        <button class="btn btn-primary" onclick="insertionSort()">Insertion Sort</button>
+                        <button class="btn btn-primary" onclick="mergeSort()">Merge Sort</button>
+                        <button class="btn btn-primary" onclick="quickSort()">Quick Sort</button>
+                        <button class="btn btn-primary" onclick="heapSort()">Heap Sort</button>
+                        <button class="btn btn-success" onclick="startSorting()">Start</button>
+                        <button class="btn btn-secondary" onclick="resetSortingArray()">Reset</button>
+                    </div>
+                    <div class="speed-control">
+                        <label>Speed:</label>
+                        <input type="range" class="speed-slider" id="sortingSpeed" min="1" max="100" value="50">
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Algorithm Comparison</h3>
+                    <table style="width: 100%; text-align: left; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <th style="padding: 0.5rem;">Algorithm</th>
+                                <th style="padding: 0.5rem;">Best</th>
+                                <th style="padding: 0.5rem;">Average</th>
+                                <th style="padding: 0.5rem;">Worst</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 0.5rem;">Bubble Sort</td>
+                                <td style="padding: 0.5rem; color: var(--secondary);">O(n)</td>
+                                <td style="padding: 0.5rem; color: var(--danger);">O(n²)</td>
+                                <td style="padding: 0.5rem; color: var(--danger);">O(n²)</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 0.5rem;">Selection Sort</td>
+                                <td style="padding: 0.5rem; color: var(--accent);">O(n²)</td>
+                                <td style="padding: 0.5rem; color: var(--accent);">O(n²)</td>
+                                <td style="padding: 0.5rem; color: var(--accent);">O(n²)</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 0.5rem;">Insertion Sort</td>
+                                <td style="padding: 0.5rem; color: var(--secondary);">O(n)</td>
+                                <td style="padding: 0.5rem; color: var(--accent);">O(n²)</td>
+                                <td style="padding: 0.5rem; color: var(--accent);">O(n²)</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 0.5rem;">Merge Sort</td>
+                                <td style="padding: 0.5rem; color: var(--secondary);">O(n log n)</td>
+                                <td style="padding: 0.5rem; color: var(--secondary);">O(n log n)</td>
+                                <td style="padding: 0.5rem; color: var(--secondary);">O(n log n)</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 0.5rem;">Quick Sort</td>
+                                <td style="padding: 0.5rem; color: var(--secondary);">O(n log n)</td>
+                                <td style="padding: 0.5rem; color: var(--secondary);">O(n log n)</td>
+                                <td style="padding: 0.5rem; color: var(--danger);">O(n²)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.5rem;">Heap Sort</td>
+                                <td style="padding: 0.5rem; color: var(--secondary);">O(n log n)</td>
+                                <td style="padding: 0.5rem; color: var(--secondary);">O(n log n)</td>
+                                <td style="padding: 0.5rem; color: var(--secondary);">O(n log n)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--primary);"></div>
+                            <span>Unsorted</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--danger);"></div>
+                            <span>Comparing</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--secondary);"></div>
+                            <span>Sorted</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <div class="code-tabs">
+                        <div class="code-tab active" data-target="sort-python">Python</div>
+                        <div class="code-tab" data-target="sort-java">Java</div>
+                        <div class="code-tab" data-target="sort-cpp">C++</div>
+                        <div class="code-tab" data-target="sort-js">JavaScript</div>
+                    </div>
+                </div>
+                <pre id="sort-python"><code><span class="comment"># Python Sorting</span>
+<span class="comment"># Bubble Sort</span>
+<span class="keyword">def</span> <span class="function">bubble_sort</span>(arr):
+    n = <span class="function">len</span>(arr)
+    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(n):
+        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="function">range</span>(<span class="number">0</span>, n - i - <span class="number">1</span>):
+            <span class="keyword">if</span> arr[j] > arr[j + <span class="number">1</span>]:
+                arr[j], arr[j + <span class="number">1</span>] = arr[j + <span class="number">1</span>], arr[j]
+    <span class="keyword">return</span> arr
+
+<span class="comment"># Quick Sort</span>
+<span class="keyword">def</span> <span class="function">quick_sort</span>(arr):
+    <span class="keyword">if</span> <span class="function">len</span>(arr) <= <span class="number">1</span>:
+        <span class="keyword">return</span> arr
+    pivot = arr[<span class="function">len</span>(arr) // <span class="number">2</span>]
+    left = [x <span class="keyword">for</span> x <span class="keyword">in</span> arr <span class="keyword">if</span> x < pivot]
+    middle = [x <span class="keyword">for</span> x <span class="keyword">in</span> arr <span class="keyword">if</span> x == pivot]
+    right = [x <span class="keyword">for</span> x <span class="keyword">in</span> arr <span class="keyword">if</span> x > pivot]
+    <span class="keyword">return</span> <span class="function">quick_sort</span>(left) + middle + <span class="function">quick_sort</span>(right)</code></pre>
+                <pre id="sort-java" style="display:none;"><code><span class="comment">// Java Sorting</span>
+<span class="comment">// Bubble Sort</span>
+<span class="keyword">public static void</span> <span class="function">bubbleSort</span>(<span class="keyword">int</span>[] arr) {
+    <span class="keyword">int</span> n = arr.length;
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < n - <span class="number">1</span>; i++) {
+        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j < n - i - <span class="number">1</span>; j++) {
+            <span class="keyword">if</span> (arr[j] > arr[j + <span class="number">1</span>]) {
+                <span class="keyword">int</span> temp = arr[j];
+                arr[j] = arr[j + <span class="number">1</span>];
+                arr[j + <span class="number">1</span>] = temp;
+            }
+        }
+    }
+}</code></pre>
+                <pre id="sort-cpp" style="display:none;"><code><span class="comment">// C++ Sorting</span>
+<span class="comment">// Bubble Sort</span>
+<span class="keyword">void</span> <span class="function">bubbleSort</span>(vector<int>& arr) {
+    <span class="keyword">int</span> n = arr.size();
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < n - <span class="number">1</span>; i++) {
+        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j < n - i - <span class="number">1</span>; j++) {
+            <span class="keyword">if</span> (arr[j] > arr[j + <span class="number">1</span>]) {
+                swap(arr[j], arr[j + <span class="number">1</span>]);
+            }
+        }
+    }
+}</code></pre>
+                <pre id="sort-js" style="display:none;"><code><span class="comment">// JavaScript Sorting</span>
+<span class="comment">// Bubble Sort</span>
+<span class="keyword">function</span> <span class="function">bubbleSort</span>(arr) {
+    <span class="keyword">const</span> n = arr.length;
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < n - <span class="number">1</span>; i++) {
+        <span class="keyword">for</span> (<span class="keyword">let</span> j = <span class="number">0</span>; j < n - i - <span class="number">1</span>; j++) {
+            <span class="keyword">if</span> (arr[j] > arr[j + <span class="number">1</span>]) {
+                [arr[j], arr[j + <span class="number">1</span>]] = [arr[j + <span class="number">1</span>], arr[j]];
+            }
+        }
+    }
+    <span class="keyword">return</span> arr;
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="searching" class="section">
+            <h2 class="section-title">Searching Algorithms</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">Linear Search</h3>
+                    <p>Sequentially checks each element until the target is found</p>
+                    <div class="algo-info">
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Time Complexity</div>
+                            <div class="algo-info-value">O(n)</div>
+                        </div>
+                    </div>
+                    <div class="visualization-container">
+                        <div class="array-container" id="linearSearchVisualizer"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="linearSearch()">Linear Search</button>
+                        <button class="btn btn-secondary" onclick="resetLinearSearch()">Reset</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Target:</label>
+                        <input type="number" id="linearSearchTarget" placeholder="Enter value" style="width: 120px;">
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Binary Search</h3>
+                    <p>Divides the sorted array in half each time to find the target</p>
+                    <div class="algo-info">
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Time Complexity</div>
+                            <div class="algo-info-value">O(log n)</div>
+                        </div>
+                    </div>
+                    <div class="info-box warning">
+                        Array must be sorted for binary search!
+                    </div>
+                    <div class="visualization-container">
+                        <div class="array-container" id="binarySearchVisualizer"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="binarySearch()">Binary Search</button>
+                        <button class="btn btn-secondary" onclick="resetBinarySearch()">Reset</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Target:</label>
+                        <input type="number" id="binarySearchTarget" placeholder="Enter value" style="width: 120px;">
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--primary);">Advanced Searching</h3>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">Jump Search</h3>
+                    <p>Jumps ahead by fixed steps to find the target, then linear search</p>
+                    <div class="algo-info">
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Time Complexity</div>
+                            <div class="algo-info-value">O(√n)</div>
+                        </div>
+                    </div>
+                    <div class="visualization-container">
+                        <div class="array-container" id="jumpSearchVisualizer"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="jumpSearch()">Jump Search</button>
+                        <button class="btn btn-secondary" onclick="resetJumpSearch()">Reset</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Target:</label>
+                        <input type="number" id="jumpSearchTarget" placeholder="Enter value" style="width: 120px;">
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Exponential Search</h3>
+                    <p>Finds range by doubling, then binary search within range</p>
+                    <div class="algo-info">
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Time Complexity</div>
+                            <div class="algo-info-value">O(log n)</div>
+                        </div>
+                    </div>
+                    <div class="visualization-container">
+                        <div class="array-container" id="exponentialSearchVisualizer"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="exponentialSearch()">Exponential Search</button>
+                        <button class="btn btn-secondary" onclick="resetExponentialSearch()">Reset</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Target:</label>
+                        <input type="number" id="exponentialSearchTarget" placeholder="Enter value" style="width: 120px;">
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--primary);">Graph Traversal</h3>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">Breadth-First Search (BFS)</h3>
+                    <p>Explores all neighbors at present depth before moving deeper</p>
+                    <div class="algo-info">
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Time Complexity</div>
+                            <div class="algo-info-value">O(V + E)</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <strong>Used in:</strong> Shortest path, Level order traversal
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Depth-First Search (DFS)</h3>
+                    <p>Explores as far as possible before backtracking</p>
+                    <div class="algo-info">
+                        <div class="algo-info-item">
+                            <div class="algo-info-label">Time Complexity</div>
+                            <div class="algo-info-value">O(V + E)</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <strong>Used in:</strong> Cycle detection, Topological sort
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--primary);">Searching Comparison</h3>
+            <div class="card">
+                <table style="width: 100%; text-align: left; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <th style="padding: 0.5rem;">Algorithm</th>
+                            <th style="padding: 0.5rem;">Best</th>
+                            <th style="padding: 0.5rem;">Average</th>
+                            <th style="padding: 0.5rem;">Worst</th>
+                            <th style="padding: 0.5rem;">Space</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 0.5rem;">Linear Search</td>
+                            <td style="padding: 0.5rem; color: var(--secondary);">O(1)</td>
+                            <td style="padding: 0.5rem; color: var(--danger);">O(n)</td>
+                            <td style="padding: 0.5rem; color: var(--danger);">O(n)</td>
+                            <td style="padding: 0.5rem;">O(1)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 0.5rem;">Binary Search</td>
+                            <td style="padding: 0.5rem; color: var(--secondary);">O(1)</td>
+                            <td style="padding: 0.5rem; color: var(--secondary);">O(log n)</td>
+                            <td style="padding: 0.5rem; color: var(--secondary);">O(log n)</td>
+                            <td style="padding: 0.5rem;">O(1)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 0.5rem;">Jump Search</td>
+                            <td style="padding: 0.5rem; color: var(--secondary);">O(√n)</td>
+                            <td style="padding: 0.5rem; color: var(--accent);">O(√n)</td>
+                            <td style="padding: 0.5rem; color: var(--accent);">O(√n)</td>
+                            <td style="padding: 0.5rem;">O(1)</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem;">Exponential Search</td>
+                            <td style="padding: 0.5rem; color: var(--secondary);">O(1)</td>
+                            <td style="padding: 0.5rem; color: var(--secondary);">O(log n)</td>
+                            <td style="padding: 0.5rem; color: var(--secondary);">O(log n)</td>
+                            <td style="padding: 0.5rem;">O(1)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <div class="code-tabs">
+                        <div class="code-tab active" data-target="search-python">Python</div>
+                        <div class="code-tab" data-target="search-java">Java</div>
+                        <div class="code-tab" data-target="search-cpp">C++</div>
+                        <div class="code-tab" data-target="search-js">JavaScript</div>
+                    </div>
+                </div>
+                <pre id="search-python"><code><span class="comment"># Python Searching Algorithms</span>
+
+<span class="comment"># Linear Search</span>
+<span class="keyword">def</span> <span class="function">linear_search</span>(arr, target):
+    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="function">len</span>(arr)):
+        <span class="keyword">if</span> arr[i] == target:
+            <span class="keyword">return</span> i
+    <span class="keyword">return</span> -<span class="number">1</span>
+
+<span class="comment"># Binary Search</span>
+<span class="keyword">def</span> <span class="function">binary_search</span>(arr, target):
+    left, right = <span class="number">0</span>, <span class="function">len</span>(arr) - <span class="number">1</span>
+    <span class="keyword">while</span> left <= right:
+        mid = (left + right) // <span class="number">2</span>
+        <span class="keyword">if</span> arr[mid] == target:
+            <span class="keyword">return</span> mid
+        <span class="keyword">elif</span> arr[mid] < target:
+            left = mid + <span class="number">1</span>
+        <span class="keyword">else</span>:
+            right = mid - <span class="number">1</span>
+    <span class="keyword">return</span> -<span class="number">1</span>
+
+<span class="comment"># Jump Search</span>
+<span class="keyword">import</span> math
+
+<span class="keyword">def</span> <span class="function">jump_search</span>(arr, target):
+    n = <span class="function">len</span>(arr)
+    step = <span class="function">int</span>(math.sqrt(n))
+    prev = <span class="number">0</span>
+    <span class="keyword">while</span> arr[<span class="function">min</span>(step, n) - <span class="number">1</span>] < target:
+        prev = step
+        step += <span class="function">int</span>(math.sqrt(n))
+        <span class="keyword">if</span> prev >= n:
+            <span class="keyword">return</span> -<span class="number">1</span>
+    <span class="keyword">while</span> arr[prev] < target:
+        prev += <span class="number">1</span>
+        <span class="keyword">if</span> prev == <span class="function">min</span>(step, n):
+            <span class="keyword">return</span> -<span class="number">1</span>
+    <span class="keyword">if</span> arr[prev] == target:
+        <span class="keyword">return</span> prev
+    <span class="keyword">return</span> -<span class="number">1</span>
+
+<span class="comment"># Exponential Search</span>
+<span class="keyword">def</span> <span class="function">exponential_search</span>(arr, target):
+    <span class="keyword">if</span> arr[<span class="number">0</span>] == target:
+        <span class="keyword">return</span> <span class="number">0</span>
+    n = <span class="function">len</span>(arr)
+    i = <span class="number">1</span>
+    <span class="keyword">while</span> i < n <span class="keyword">and</span> arr[i] <= target:
+        i = i * <span class="number">2</span>
+    <span class="keyword">return</span> <span class="function">binary_search</span>(arr[:<span class="function">min</span>(i, n)], target)</code></pre>
+                <pre id="search-java" style="display:none;"><code><span class="comment">// Java Searching Algorithms</span>
+
+<span class="comment">// Linear Search</span>
+<span class="keyword">public static int</span> <span class="function">linearSearch</span>(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> target) {
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < arr.length; i++) {
+        <span class="keyword">if</span> (arr[i] == target) <span class="keyword">return</span> i;
+    }
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}
+
+<span class="comment">// Binary Search</span>
+<span class="keyword">public static int</span> <span class="function">binarySearch</span>(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> target) {
+    <span class="keyword">int</span> left = <span class="number">0</span>, right = arr.length - <span class="number">1</span>;
+    <span class="keyword">while</span> (left <= right) {
+        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;
+        <span class="keyword">if</span> (arr[mid] == target) <span class="keyword">return</span> mid;
+        <span class="keyword">else if</span> (arr[mid] < target) left = mid + <span class="number">1</span>;
+        <span class="keyword">else</span> right = mid - <span class="number">1</span>;
+    }
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}
+
+<span class="comment">// Jump Search</span>
+<span class="keyword">public static int</span> <span class="function">jumpSearch</span>(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> target) {
+    <span class="keyword">int</span> n = arr.length;
+    <span class="keyword">int</span> step = (<span class="keyword">int</span>) Math.sqrt(n);
+    <span class="keyword">int</span> prev = <span class="number">0</span>;
+    <span class="keyword">while</span> (arr[<span class="function">Math</span>.min(step, n) - <span class="number">1</span>] < target) {
+        prev = step;
+        step += (<span class="keyword">int</span>) Math.sqrt(n);
+        <span class="keyword">if</span> (prev >= n) <span class="keyword">return</span> -<span class="number">1</span>;
+    }
+    <span class="keyword">while</span> (arr[prev] < target) {
+        prev++;
+        <span class="keyword">if</span> (prev == <span class="function">Math</span>.min(step, n)) <span class="keyword">return</span> -<span class="number">1</span>;
+    }
+    <span class="keyword">return</span> arr[prev] == target ? prev : -<span class="number">1</span>;
+}</code></pre>
+                <pre id="search-cpp" style="display:none;"><code><span class="comment">// C++ Searching Algorithms</span>
+
+<span class="comment">// Linear Search</span>
+<span class="keyword">int</span> <span class="function">linearSearch</span>(vector&lt;int&gt; arr, <span class="keyword">int</span> target) {
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < arr.size(); i++) {
+        <span class="keyword">if</span> (arr[i] == target) <span class="keyword">return</span> i;
+    }
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}
+
+<span class="comment">// Binary Search</span>
+<span class="keyword">int</span> <span class="function">binarySearch</span>(vector&lt;int&gt; arr, <span class="keyword">int</span> target) {
+    <span class="keyword">int</span> left = <span class="number">0</span>, right = arr.size() - <span class="number">1</span>;
+    <span class="keyword">while</span> (left <= right) {
+        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;
+        <span class="keyword">if</span> (arr[mid] == target) <span class="keyword">return</span> mid;
+        <span class="keyword">else if</span> (arr[mid] < target) left = mid + <span class="number">1</span>;
+        <span class="keyword">else</span> right = mid - <span class="number">1</span>;
+    }
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}
+
+<span class="comment">// Jump Search</span>
+<span class="keyword">#include</span> <span class="string">&lt;cmath&gt;</span>
+<span class="keyword">int</span> <span class="function">jumpSearch</span>(vector&lt;int&gt; arr, <span class="keyword">int</span> target) {
+    <span class="keyword">int</span> n = arr.size();
+    <span class="keyword">int</span> step = sqrt(n);
+    <span class="keyword">int</span> prev = <span class="number">0</span>;
+    <span class="keyword">while</span> (arr[min(step, n) - <span class="number">1</span>] < target) {
+        prev = step;
+        step += sqrt(n);
+        <span class="keyword">if</span> (prev >= n) <span class="keyword">return</span> -<span class="number">1</span>;
+    }
+    <span class="keyword">while</span> (arr[prev] < target) {
+        prev++;
+        <span class="keyword">if</span> (prev == min(step, n)) <span class="keyword">return</span> -<span class="number">1</span>;
+    }
+    <span class="keyword">return</span> arr[prev] == target ? prev : -<span class="number">1</span>;
+}</code></pre>
+                <pre id="search-js" style="display:none;"><code><span class="comment">// JavaScript Searching Algorithms</span>
+
+<span class="comment">// Linear Search</span>
+<span class="keyword">function</span> <span class="function">linearSearch</span>(arr, target) {
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < arr.length; i++) {
+        <span class="keyword">if</span> (arr[i] === target) <span class="keyword">return</span> i;
+    }
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}
+
+<span class="comment">// Binary Search</span>
+<span class="keyword">function</span> <span class="function">binarySearch</span>(arr, target) {
+    <span class="keyword">let</span> left = <span class="number">0</span>, right = arr.length - <span class="number">1</span>;
+    <span class="keyword">while</span> (left <= right) {
+        <span class="keyword">const</span> mid = Math.floor((left + right) / <span class="number">2</span>);
+        <span class="keyword">if</span> (arr[mid] === target) <span class="keyword">return</span> mid;
+        <span class="keyword">else if</span> (arr[mid] < target) left = mid + <span class="number">1</span>;
+        <span class="keyword">else</span> right = mid - <span class="number">1</span>;
+    }
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}
+
+<span class="comment">// Jump Search</span>
+<span class="keyword">function</span> <span class="function">jumpSearch</span>(arr, target) {
+    <span class="keyword">const</span> n = arr.length;
+    <span class="keyword">const</span> step = Math.floor(Math.sqrt(n));
+    <span class="keyword">let</span> prev = <span class="number">0</span>;
+    <span class="keyword">while</span> (arr[Math.min(step, n) - <span class="number">1</span>] < target) {
+        prev = step;
+        step += Math.floor(Math.sqrt(n));
+        <span class="keyword">if</span> (prev >= n) <span class="keyword">return</span> -<span class="number">1</span>;
+    }
+    <span class="keyword">while</span> (arr[prev] < target) {
+        prev++;
+        <span class="keyword">if</span> (prev === Math.min(step, n)) <span class="keyword">return</span> -<span class="number">1</span>;
+    }
+    <span class="keyword">return</span> arr[prev] === target ? prev : -<span class="number">1</span>;
+}
+
+<span class="comment">// Exponential Search</span>
+<span class="keyword">function</span> <span class="function">exponentialSearch</span>(arr, target) {
+    <span class="keyword">if</span> (arr[<span class="number">0</span>] === target) <span class="keyword">return</span> <span class="number">0</span>;
+    <span class="keyword">let</span> i = <span class="number">1</span>;
+    <span class="keyword">while</span> (i < arr.length && arr[i] <= target) {
+        i *= <span class="number">2</span>;
+    }
+    <span class="keyword">return</span> <span class="function">binarySearch</span>(arr.slice(<span class="number">0</span>, Math.min(i, arr.length)), target);
+}</code></pre>
+            </div>
+        </section>
+                <pre id="search-java" style="display:none;"><code><span class="comment">// Java Searching</span>
+<span class="comment">// Linear Search</span>
+<span class="keyword">public static int</span> <span class="function">linearSearch</span>(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> target) {
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < arr.length; i++) {
+        <span class="keyword">if</span> (arr[i] == target) {
+            <span class="keyword">return</span> i;
+        }
+    }
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}
+
+<span class="comment">// Binary Search</span>
+<span class="keyword">public static int</span> <span class="function">binarySearch</span>(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> target) {
+    <span class="keyword">int</span> left = <span class="number">0</span>, right = arr.length - <span class="number">1</span>;
+    <span class="keyword">while</span> (left <= right) {
+        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;
+        <span class="keyword">if</span> (arr[mid] == target) <span class="keyword">return</span> mid;
+        <span class="keyword">else if</span> (arr[mid] < target) left = mid + <span class="number">1</span>;
+        <span class="keyword">else</span> right = mid - <span class="number">1</span>;
+    }
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}</code></pre>
+                <pre id="search-cpp" style="display:none;"><code><span class="comment">// C++ Searching</span>
+<span class="comment">// Linear Search</span>
+<span class="keyword">int</span> <span class="function">linearSearch</span>(vector<int> arr, <span class="keyword">int</span> target) {
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < arr.size(); i++) {
+        <span class="keyword">if</span> (arr[i] == target) <span class="keyword">return</span> i;
+    }
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}
+
+<span class="comment">// Binary Search</span>
+<span class="keyword">int</span> <span class="function">binarySearch</span>(vector<int> arr, <span class="keyword">int</span> target) {
+    <span class="keyword">int</span> left = <span class="number">0</span>, right = arr.size() - <span class="number">1</span>;
+    <span class="keyword">while</span> (left <= right) {
+        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;
+        <span class="keyword">if</span> (arr[mid] == target) <span class="keyword">return</span> mid;
+        <span class="keyword">else if</span> (arr[mid] < target) left = mid + <span class="number">1</span>;
+        <span class="keyword">else</span> right = mid - <span class="number">1</span>;
+    }
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}</code></pre>
+                <pre id="search-js" style="display:none;"><code><span class="comment">// JavaScript Searching</span>
+<span class="comment">// Linear Search</span>
+<span class="keyword">function</span> <span class="function">linearSearch</span>(arr, target) {
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < arr.length; i++) {
+        <span class="keyword">if</span> (arr[i] === target) <span class="keyword">return</span> i;
+    }
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}
+
+<span class="comment">// Binary Search</span>
+<span class="keyword">function</span> <span class="function">binarySearch</span>(arr, target) {
+    <span class="keyword">let</span> left = <span class="number">0</span>, right = arr.length - <span class="number">1</span>;
+    <span class="keyword">while</span> (left <= right) {
+        <span class="keyword">const</span> mid = Math.floor((left + right) / <span class="number">2</span>);
+        <span class="keyword">if</span> (arr[mid] === target) <span class="keyword">return</span> mid;
+        <span class="keyword">else if</span> (arr[mid] < target) left = mid + <span class="number">1</span>;
+        <span class="keyword">else</span> right = mid - <span class="number">1</span>;
+    }
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="quiz" class="section">
+            <h2 class="section-title">DSA Quiz</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title">Test Your Knowledge</h3>
+                    <div id="quizContainer">
+                        <div class="quiz-question" id="question1">
+                            <p><strong>1. What is the time complexity of accessing an element in an array by index?</strong></p>
+                            <div class="quiz-options">
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">A) O(n)</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, true)">B) O(1)</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">C) O(log n)</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">D) O(n²)</div>
+                            </div>
+                        </div>
+                        <div class="quiz-question" id="question2">
+                            <p><strong>2. Which data structure follows LIFO?</strong></p>
+                            <div class="quiz-options">
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">A) Queue</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">B) Array</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, true)">C) Stack</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">D) Linked List</div>
+                            </div>
+                        </div>
+                        <div class="quiz-question" id="question3">
+                            <p><strong>3. What is the worst-case time complexity of Quick Sort?</strong></p>
+                            <div class="quiz-options">
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">A) O(n log n)</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">B) O(n)</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, true)">C) O(n²)</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">D) O(1)</div>
+                            </div>
+                        </div>
+                        <div class="quiz-question" id="question4">
+                            <p><strong>4. Which searching algorithm requires a sorted array?</strong></p>
+                            <div class="quiz-options">
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">A) Linear Search</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, true)">B) Binary Search</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">C) Both</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">D) Neither</div>
+                            </div>
+                        </div>
+                        <div class="quiz-question" id="question5">
+                            <p><strong>5. In a BST, what condition must be true for all nodes?</strong></p>
+                            <div class="quiz-options">
+                                <div class="quiz-option" onclick="selectAnswer(this, true)">A) Left child &lt; Root &lt; Right child</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">B) Root is always smallest</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">C) All children are equal</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">D) No specific order</div>
+                            </div>
+                        </div>
+                        <div class="quiz-question" id="question6">
+                            <p><strong>6. What is the time complexity of Heap insertion?</strong></p>
+                            <div class="quiz-options">
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">A) O(1)</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">B) O(n)</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, true)">C) O(log n)</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">D) O(n log n)</div>
+                            </div>
+                        </div>
+                        <div class="quiz-question" id="question7">
+                            <p><strong>7. What is the average time complexity of Hash Table operations?</strong></p>
+                            <div class="quiz-options">
+                                <div class="quiz-option" onclick="selectAnswer(this, true)">A) O(1)</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">B) O(log n)</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">C) O(n)</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">D) O(n²)</div>
+                            </div>
+                        </div>
+                        <div class="quiz-question" id="question8">
+                            <p><strong>8. Which data structure uses LIFO?</strong></p>
+                            <div class="quiz-options">
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">A) Queue</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, true)">B) Stack</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">C) Array</div>
+                                <div class="quiz-option" onclick="selectAnswer(this, false)">D) Linked List</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="controls" style="margin-top: 1rem;">
+                        <button class="btn btn-primary" onclick="resetQuiz()">Reset Quiz</button>
+                        <button class="btn btn-success" onclick="submitQuiz()">Submit Quiz</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Quiz Results</h3>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <span class="stat-label">Correct:</span>
+                            <span class="stat-value" id="correctCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Total:</span>
+                            <span class="stat-value">8</span>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="quizProgress" style="width: 0%;"></div>
+                    </div>
+                    <p style="margin-top: 1rem; color: var(--text-secondary);" id="quizMessage">Answer all questions and submit to see results!</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>DSA Visualizer - Learn Data Structures & Algorithms</p>
+        <p style="margin-top: 0.5rem; font-size: 0.85rem;">Code examples in Python, Java, C++, and JavaScript</p>
+        <div class="social-links" style="margin-top: 1rem; display: flex; gap: 1rem; justify-content: center;">
+            <a href="https://github.com/PiRATEO1" target="_blank" style="color: var(--text-secondary); text-decoration: none; display: flex; align-items: center; gap: 0.3rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                GitHub
+            </a>
+            <a href="https://www.linkedin.com/in/saurabh-raj01/" target="_blank" style="color: var(--text-secondary); text-decoration: none; display: flex; align-items: center; gap: 0.3rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#0077b5"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                LinkedIn
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+            
+            if (sectionId === 'arrays') initArrayVisualizer();
+            if (sectionId === 'linkedlist') initLinkedListVisualizer();
+            if (sectionId === 'stack') initStackVisualizer();
+            if (sectionId === 'queue') initQueueVisualizer();
+            if (sectionId === 'sorting') initSortingVisualizer();
+            if (sectionId === 'searching') initSearchingVisualizers();
+        }
+
+        // Light/Dark Mode Toggle
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            const icon = document.querySelector('.theme-icon');
+            icon.textContent = isLight ? '🌙' : '☀️';
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                document.querySelector('.theme-icon').textContent = '🌙';
+            }
+        });
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => showSection(link.dataset.section));
+        });
+
+        document.querySelectorAll('.code-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const parent = tab.closest('.code-container');
+                parent.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+                parent.querySelectorAll('pre').forEach(p => p.style.display = 'none');
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.target).style.display = 'block';
+            });
+        });
+
+        // Array Visualizer
+        let arrayData = [];
+        function initArrayVisualizer() {
+            if (arrayData.length === 0) generateRandomArray();
+        }
+        function generateRandomArray() {
+            arrayData = [];
+            for (let i = 0; i < 8; i++) arrayData.push(Math.floor(Math.random() * 99) + 1);
+            renderArray();
+        }
+        function renderArray() {
+            const container = document.getElementById('arrayVisualizer');
+            container.innerHTML = '';
+            arrayData.forEach((value, index) => {
+                const el = document.createElement('div');
+                el.className = 'array-element default';
+                el.textContent = value;
+                el.id = `array-${index}`;
+                const idx = document.createElement('span');
+                idx.className = 'array-index';
+                idx.textContent = index;
+                el.appendChild(idx);
+                container.appendChild(el);
+            });
+            document.getElementById('arraySize').textContent = arrayData.length;
+        }
+        function addArrayElement() {
+            const v = parseInt(document.getElementById('arrayValue').value);
+            if (!isNaN(v) && arrayData.length < 12) {
+                arrayData.push(v);
+                renderArray();
+            }
+        }
+        function removeArrayElement() {
+            if (arrayData.length > 0) {
+                arrayData.pop();
+                renderArray();
+            }
+        }
+        function clearArray() {
+            arrayData = [];
+            renderArray();
+        }
+        function accessRandomElement() {
+            if (arrayData.length > 0) {
+                const idx = Math.floor(Math.random() * arrayData.length);
+                const el = document.getElementById(`array-${idx}`);
+                el.classList.add('accessed');
+                setTimeout(() => el.classList.remove('accessed'), 1000);
+            }
+        }
+        function searchElement() {
+            const v = parseInt(document.getElementById('arrayValue').value);
+            if (!isNaN(v)) {
+                let found = -1;
+                arrayData.forEach((val, i) => {
+                    const el = document.getElementById(`array-${i}`);
+                    el.classList.add('highlight');
+                    setTimeout(() => {
+                        if (val === v) {
+                            el.classList.remove('highlight');
+                            el.classList.add('sorted');
+                            found = i;
+                        } else {
+                            el.classList.remove('highlight');
+                        }
+                    }, (i + 1) * 300);
+                });
+            }
+        }
+
+        // Linked List Visualizer
+        let linkedListData = [];
+        function initLinkedListVisualizer() {
+            if (linkedListData.length === 0) {
+                linkedListData = [10, 20, 30, 40];
+                renderLinkedList();
+            }
+        }
+        function renderLinkedList() {
+            const container = document.getElementById('linkedListVisualizer');
+            container.innerHTML = '';
+            linkedListData.forEach((value, index) => {
+                const node = document.createElement('div');
+                node.className = 'node';
+                const box = document.createElement('div');
+                box.className = 'node-box';
+                box.textContent = value;
+                node.appendChild(box);
+                if (index < linkedListData.length - 1) {
+                    const ptr = document.createElement('div');
+                    ptr.className = 'node-pointer';
+                    node.appendChild(ptr);
+                }
+                container.appendChild(node);
+            });
+            const nullPtr = document.createElement('div');
+            nullPtr.className = 'node-pointer null';
+            container.appendChild(nullPtr);
+            document.getElementById('linkedListLength').textContent = linkedListData.length;
+        }
+        function insertAtHead() {
+            const v = parseInt(document.getElementById('linkedListValue').value);
+            if (!isNaN(v)) {
+                linkedListData.unshift(v);
+                renderLinkedList();
+            }
+        }
+        function insertAtTail() {
+            const v = parseInt(document.getElementById('linkedListValue').value);
+            if (!isNaN(v)) {
+                linkedListData.push(v);
+                renderLinkedList();
+            }
+        }
+        function deleteFromHead() {
+            if (linkedListData.length > 0) {
+                linkedListData.shift();
+                renderLinkedList();
+            }
+        }
+        function clearLinkedList() {
+            linkedListData = [];
+            renderLinkedList();
+        }
+
+        // Stack Visualizer
+        let stackData = [];
+        function initStackVisualizer() {
+            if (stackData.length === 0) {
+                stackData = [10, 20, 30];
+                renderStack();
+            }
+        }
+        function renderStack() {
+            const container = document.getElementById('stackVisualizer');
+            container.innerHTML = '';
+            stackData.forEach(value => {
+                const el = document.createElement('div');
+                el.className = 'stack-element';
+                el.textContent = value;
+                container.appendChild(el);
+            });
+            document.getElementById('stackSize').textContent = stackData.length;
+            document.getElementById('stackTop').textContent = stackData.length > 0 ? stackData[stackData.length - 1] : '-';
+        }
+        function pushStack() {
+            const v = parseInt(document.getElementById('stackValue').value);
+            if (!isNaN(v) && stackData.length < 8) {
+                stackData.push(v);
+                renderStack();
+            }
+        }
+        function popStack() {
+            if (stackData.length > 0) {
+                stackData.pop();
+                renderStack();
+            }
+        }
+        function peekStack() {
+            alert(stackData.length > 0 ? `Top element: ${stackData[stackData.length - 1]}` : 'Stack is empty');
+        }
+        function clearStack() {
+            stackData = [];
+            renderStack();
+        }
+
+        // Queue Visualizer
+        let queueData = [];
+        function initQueueVisualizer() {
+            if (queueData.length === 0) {
+                queueData = [10, 20, 30];
+                renderQueue();
+            }
+        }
+        function renderQueue() {
+            const container = document.getElementById('queueVisualizer');
+            container.innerHTML = '';
+            queueData.forEach(value => {
+                const el = document.createElement('div');
+                el.className = 'queue-element';
+                el.textContent = value;
+                container.appendChild(el);
+            });
+            document.getElementById('queueSize').textContent = queueData.length;
+        }
+        function enqueue() {
+            const v = parseInt(document.getElementById('queueValue').value);
+            if (!isNaN(v) && queueData.length < 8) {
+                queueData.push(v);
+                renderQueue();
+            }
+        }
+        function dequeue() {
+            if (queueData.length > 0) {
+                queueData.shift();
+                renderQueue();
+            }
+        }
+        function peekQueue() {
+            alert(queueData.length > 0 ? `Front element: ${queueData[0]}` : 'Queue is empty');
+        }
+        function clearQueue() {
+            queueData = [];
+            renderQueue();
+        }
+
+        // Sorting Visualizer
+        let sortingArray = [];
+        function initSortingVisualizer() {
+            if (sortingArray.length === 0) resetSortingArray();
+        }
+        function resetSortingArray() {
+            sortingArray = [];
+            for (let i = 0; i < 10; i++) sortingArray.push(Math.floor(Math.random() * 100) + 1);
+            renderSortingArray();
+        }
+        function renderSortingArray() {
+            const container = document.getElementById('sortingVisualizer');
+            container.innerHTML = '';
+            const maxVal = Math.max(...sortingArray, 1);
+            sortingArray.forEach(value => {
+                const el = document.createElement('div');
+                el.className = 'array-element default';
+                el.style.height = `${(value / maxVal) * 200}px`;
+                el.textContent = value;
+                container.appendChild(el);
+            });
+        }
+        function getDelay() {
+            return 110 - parseInt(document.getElementById('sortingSpeed').value);
+        }
+        async function bubbleSort() {
+            const arr = document.getElementById('sortingVisualizer').children;
+            for (let i = 0; i < sortingArray.length; i++) {
+                for (let j = 0; j < sortingArray.length - i - 1; j++) {
+                    arr[j].classList.add('comparing');
+                    arr[j + 1].classList.add('comparing');
+                    await new Promise(r => setTimeout(r, getDelay()));
+                    if (sortingArray[j] > sortingArray[j + 1]) {
+                        [sortingArray[j], sortingArray[j + 1]] = [sortingArray[j + 1], sortingArray[j]];
+                        renderSortingArray();
+                        await new Promise(r => setTimeout(r, getDelay()));
+                    }
+                    arr[j].classList.remove('comparing');
+                    arr[j + 1].classList.remove('comparing');
+                }
+                arr[sortingArray.length - i - 1].classList.add('sorted');
+            }
+        }
+        async function selectionSort() {
+            const arr = document.getElementById('sortingVisualizer').children;
+            for (let i = 0; i < sortingArray.length; i++) {
+                let minIdx = i;
+                for (let j = i + 1; j < sortingArray.length; j++) {
+                    arr[j].classList.add('highlight');
+                    await new Promise(r => setTimeout(r, getDelay()));
+                    if (sortingArray[j] < sortingArray[minIdx]) {
+                        arr[minIdx].classList.remove('highlight');
+                        minIdx = j;
+                    } else {
+                        arr[j].classList.remove('highlight');
+                    }
+                }
+                [sortingArray[i], sortingArray[minIdx]] = [sortingArray[minIdx], sortingArray[i]];
+                renderSortingArray();
+                await new Promise(r => setTimeout(r, getDelay()));
+                arr[i].classList.add('sorted');
+            }
+        }
+        async function insertionSort() {
+            const arr = document.getElementById('sortingVisualizer').children;
+            for (let i = 1; i < sortingArray.length; i++) {
+                let key = sortingArray[i];
+                let j = i - 1;
+                arr[i].classList.add('highlight');
+                await new Promise(r => setTimeout(r, getDelay()));
+                while (j >= 0 && sortingArray[j] > key) {
+                    arr[j].classList.add('comparing');
+                    sortingArray[j + 1] = sortingArray[j];
+                    renderSortingArray();
+                    await new Promise(r => setTimeout(r, getDelay()));
+                    arr[j].classList.remove('comparing');
+                    j--;
+                }
+                sortingArray[j + 1] = key;
+                arr[i].classList.remove('highlight');
+                renderSortingArray();
+            }
+            for (let i = 0; i < sortingArray.length; i++) {
+                arr[i].classList.add('sorted');
+            }
+        }
+
+        // Merge Sort
+        async function mergeSort() {
+            await mergeSortHelper(0, sortingArray.length - 1);
+            for (let i = 0; i < sortingArray.length; i++) {
+                arr[i].classList.add('sorted');
+            }
+        }
+        async function mergeSortHelper(left, right) {
+            if (left >= right) return;
+            const mid = Math.floor((left + right) / 2);
+            await mergeSortHelper(left, mid);
+            await mergeSortHelper(mid + 1, right);
+            await merge(left, mid, right);
+        }
+        async function merge(left, mid, right) {
+            const arr = document.getElementById('sortingVisualizer').children;
+            const temp = [];
+            for (let i = left; i <= right; i++) {
+                temp.push(sortingArray[i]);
+            }
+            let i = left, j = mid + 1, k = left;
+            while (i <= mid && j <= right) {
+                arr[i].classList.add('comparing');
+                arr[j].classList.add('comparing');
+                await new Promise(r => setTimeout(r, getDelay()));
+                if (temp[i - left] <= temp[j - left]) {
+                    sortingArray[k++] = temp[i - left];
+                    i++;
+                } else {
+                    sortingArray[k++] = temp[j - left];
+                    j++;
+                }
+                renderSortingArray();
+                arr[i]?.classList.remove('comparing');
+                arr[j]?.classList.remove('comparing');
+            }
+            while (i <= mid) {
+                sortingArray[k++] = temp[i - left];
+                i++;
+            }
+            while (j <= right) {
+                sortingArray[k++] = temp[j - left];
+                j++;
+            }
+            renderSortingArray();
+        }
+
+        // Quick Sort
+        async function quickSort() {
+            await quickSortHelper(0, sortingArray.length - 1);
+            for (let i = 0; i < sortingArray.length; i++) {
+                arr[i].classList.add('sorted');
+            }
+        }
+        async function quickSortHelper(low, high) {
+            if (low >= high) return;
+            const pivotIndex = await partition(low, high);
+            await quickSortHelper(low, pivotIndex - 1);
+            await quickSortHelper(pivotIndex + 1, high);
+        }
+        async function partition(low, high) {
+            const arr = document.getElementById('sortingVisualizer').children;
+            const pivot = sortingArray[high];
+            arr[high].classList.add('highlight');
+            let i = low - 1;
+            for (let j = low; j < high; j++) {
+                arr[j].classList.add('comparing');
+                await new Promise(r => setTimeout(r, getDelay()));
+                if (sortingArray[j] < pivot) {
+                    i++;
+                    [sortingArray[i], sortingArray[j]] = [sortingArray[j], sortingArray[i]];
+                    renderSortingArray();
+                }
+                arr[j].classList.remove('comparing');
+            }
+            [sortingArray[i + 1], sortingArray[high]] = [sortingArray[high], sortingArray[i + 1]];
+            arr[high].classList.remove('highlight');
+            renderSortingArray();
+            return i + 1;
+        }
+
+        // Heap Sort
+        async function heapSort() {
+            const arr = document.getElementById('sortingVisualizer').children;
+            const n = sortingArray.length;
+            for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+                await heapify(n, i);
+            }
+            for (let i = n - 1; i > 0; i--) {
+                arr[0].classList.add('comparing');
+                arr[i].classList.add('comparing');
+                await new Promise(r => setTimeout(r, getDelay()));
+                [sortingArray[0], sortingArray[i]] = [sortingArray[i], sortingArray[0]];
+                renderSortingArray();
+                arr[0].classList.remove('comparing');
+                arr[i].classList.remove('comparing');
+                arr[i].classList.add('sorted');
+                await heapify(i, 0);
+            }
+            arr[0].classList.add('sorted');
+        }
+        async function heapify(n, i) {
+            const arr = document.getElementById('sortingVisualizer').children;
+            let largest = i;
+            const left = 2 * i + 1;
+            const right = 2 * i + 2;
+            if (left < n) {
+                arr[left].classList.add('comparing');
+                await new Promise(r => setTimeout(r, getDelay()));
+                if (sortingArray[left] > sortingArray[largest]) largest = left;
+                arr[left].classList.remove('comparing');
+            }
+            if (right < n) {
+                arr[right].classList.add('comparing');
+                await new Promise(r => setTimeout(r, getDelay()));
+                if (sortingArray[right] > sortingArray[largest]) largest = right;
+                arr[right].classList.remove('comparing');
+            }
+            if (largest !== i) {
+                [sortingArray[i], sortingArray[largest]] = [sortingArray[largest], sortingArray[i]];
+                renderSortingArray();
+                await heapify(n, largest);
+            }
+        }
+
+        // Searching Visualizers
+        let linearSearchArray = [5, 12, 23, 45, 67, 89, 101, 134, 156];
+        let binarySearchArray = [3, 7, 15, 22, 35, 48, 59, 71, 83, 95];
+        
+        function initSearchingVisualizers() {
+            renderLinearSearchArray();
+            renderBinarySearchArray();
+        }
+        function renderLinearSearchArray() {
+            const container = document.getElementById('linearSearchVisualizer');
+            container.innerHTML = '';
+            linearSearchArray.forEach((value, index) => {
+                const el = document.createElement('div');
+                el.className = 'array-element default';
+                el.textContent = value;
+                el.id = `linear-${index}`;
+                container.appendChild(el);
+            });
+        }
+        function renderBinarySearchArray() {
+            const container = document.getElementById('binarySearchVisualizer');
+            container.innerHTML = '';
+            binarySearchArray.forEach((value, index) => {
+                const el = document.createElement('div');
+                el.className = 'array-element default';
+                el.textContent = value;
+                el.id = `binary-${index}`;
+                container.appendChild(el);
+            });
+        }
+        async function linearSearch() {
+            const target = parseInt(document.getElementById('linearSearchTarget').value);
+            if (!isNaN(target)) {
+                for (let i = 0; i < linearSearchArray.length; i++) {
+                    const el = document.getElementById(`linear-${i}`);
+                    el.classList.add('comparing');
+                    await new Promise(r => setTimeout(r, 500));
+                    if (linearSearchArray[i] === target) {
+                        el.classList.remove('comparing');
+                        el.classList.add('sorted');
+                        alert(`Found at index ${i}!`);
+                        return;
+                    }
+                    el.classList.remove('comparing');
+                }
+                alert('Not found!');
+            }
+        }
+        function resetLinearSearch() {
+            linearSearchArray = [5, 12, 23, 45, 67, 89, 101, 134, 156];
+            renderLinearSearchArray();
+        }
+        async function binarySearch() {
+            const target = parseInt(document.getElementById('binarySearchTarget').value);
+            if (!isNaN(target)) {
+                let left = 0, right = binarySearchArray.length - 1;
+                while (left <= right) {
+                    const mid = Math.floor((left + right) / 2);
+                    const el = document.getElementById(`binary-${mid}`);
+                    el.classList.add('comparing');
+                    await new Promise(r => setTimeout(r, 800));
+                    if (binarySearchArray[mid] === target) {
+                        el.classList.remove('comparing');
+                        el.classList.add('sorted');
+                        alert(`Found at index ${mid}!`);
+                        return;
+                    } else if (binarySearchArray[mid] < target) {
+                        left = mid + 1;
+                    } else {
+                        right = mid - 1;
+                    }
+                    el.classList.remove('comparing');
+                }
+                alert('Not found!');
+            }
+        }
+        function resetBinarySearch() {
+            binarySearchArray = [3, 7, 15, 22, 35, 48, 59, 71, 83, 95];
+            renderBinarySearchArray();
+        }
+
+        // Jump Search Visualizer
+        let jumpSearchArray = [3, 7, 15, 22, 35, 48, 59, 71, 83, 95, 107, 120];
+        function renderJumpSearchArray() {
+            const container = document.getElementById('jumpSearchVisualizer');
+            if (!container) return;
+            container.innerHTML = '';
+            jumpSearchArray.forEach((value, index) => {
+                const el = document.createElement('div');
+                el.className = 'array-element default';
+                el.textContent = value;
+                el.id = `jump-${index}`;
+                container.appendChild(el);
+            });
+        }
+        async function jumpSearch() {
+            const target = parseInt(document.getElementById('jumpSearchTarget').value);
+            if (isNaN(target)) return;
+            const n = jumpSearchArray.length;
+            const step = Math.floor(Math.sqrt(n));
+            let prev = 0;
+            while (jumpSearchArray[Math.min(step, n) - 1] < target) {
+                const el = document.getElementById(`jump-${prev}`);
+                if (el) el.classList.add('highlight');
+                await new Promise(r => setTimeout(r, 500));
+                prev = step;
+                step += Math.floor(Math.sqrt(n));
+                if (prev >= n) {
+                    alert('Not found!');
+                    return;
+                }
+            }
+            while (jumpSearchArray[prev] < target) {
+                const el = document.getElementById(`jump-${prev}`);
+                if (el) el.classList.remove('highlight');
+                prev++;
+                if (prev === Math.min(step, n)) {
+                    alert('Not found!');
+                    return;
+                }
+            }
+            const el = document.getElementById(`jump-${prev}`);
+            if (el) {
+                el.classList.add('highlight');
+                await new Promise(r => setTimeout(r, 500));
+                if (jumpSearchArray[prev] === target) {
+                    el.classList.remove('highlight');
+                    el.classList.add('sorted');
+                    alert(`Found at index ${prev}!`);
+                } else {
+                    el.classList.remove('highlight');
+                    alert('Not found!');
+                }
+            }
+        }
+        function resetJumpSearch() {
+            jumpSearchArray = [3, 7, 15, 22, 35, 48, 59, 71, 83, 95, 107, 120];
+            renderJumpSearchArray();
+        }
+
+        // Exponential Search Visualizer
+        let expSearchArray = [3, 7, 15, 22, 35, 48, 59, 71, 83, 95, 107, 120, 135, 150, 170];
+        function renderExpSearchArray() {
+            const container = document.getElementById('exponentialSearchVisualizer');
+            if (!container) return;
+            container.innerHTML = '';
+            expSearchArray.forEach((value, index) => {
+                const el = document.createElement('div');
+                el.className = 'array-element default';
+                el.textContent = value;
+                el.id = `exp-${index}`;
+                container.appendChild(el);
+            });
+        }
+        async function exponentialSearch() {
+            const target = parseInt(document.getElementById('exponentialSearchTarget').value);
+            if (isNaN(target)) return;
+            if (expSearchArray[0] === target) {
+                const el = document.getElementById('exp-0');
+                if (el) el.classList.add('sorted');
+                alert('Found at index 0!');
+                return;
+            }
+            let i = 1;
+            while (i < expSearchArray.length && expSearchArray[i] <= target) {
+                const el = document.getElementById(`exp-${i}`);
+                if (el) el.classList.add('highlight');
+                await new Promise(r => setTimeout(r, 300));
+                if (expSearchArray[i] === target) {
+                    el.classList.remove('highlight');
+                    el.classList.add('sorted');
+                    alert(`Found at index ${i}!`);
+                    return;
+                }
+                i *= 2;
+            }
+            const low = Math.floor(i / 2);
+            const high = Math.min(i, expSearchArray.length - 1);
+            for (let j = low; j <= high; j++) {
+                const el = document.getElementById(`exp-${j}`);
+                if (el) el.classList.add('comparing');
+                await new Promise(r => setTimeout(r, 300));
+                if (expSearchArray[j] === target) {
+                    el.classList.remove('comparing');
+                    el.classList.add('sorted');
+                    alert(`Found at index ${j}!`);
+                    return;
+                }
+                el.classList.remove('comparing');
+            }
+            alert('Not found!');
+        }
+        function resetExponentialSearch() {
+            expSearchArray = [3, 7, 15, 22, 35, 48, 59, 71, 83, 95, 107, 120, 135, 150, 170];
+            renderExpSearchArray();
+        }
+
+        // Initialize searching visualizers
+        const originalInitSearching = initSearchingVisualizers;
+        initSearchingVisualizers = function() {
+            renderLinearSearchArray();
+            renderBinarySearchArray();
+            renderJumpSearchArray();
+            renderExpSearchArray();
+        };
+
+        // Quiz
+        let correctAnswers = 0;
+        function selectAnswer(element, isCorrect) {
+            const siblings = element.parentElement.children;
+            for (let sib of siblings) {
+                sib.classList.remove('selected');
+                sib.classList.remove('correct');
+                sib.classList.remove('incorrect');
+            }
+            element.classList.add('selected');
+            if (isCorrect) {
+                element.classList.add('correct');
+            } else {
+                element.classList.add('incorrect');
+            }
+        }
+        function submitQuiz() {
+            const questions = document.querySelectorAll('.quiz-question');
+            correctAnswers = 0;
+            questions.forEach(q => {
+                const selected = q.querySelector('.quiz-option.selected');
+                if (selected && selected.classList.contains('correct')) {
+                    correctAnswers++;
+                }
+            });
+            const total = questions.length;
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('quizProgress').style.width = `${(correctAnswers / total) * 100}%`;
+            document.getElementById('quizMessage').textContent = 
+                correctAnswers === total ? 'Perfect score! Great job!' :
+                correctAnswers >= total / 2 ? 'Good job! Keep practicing!' :
+                'Keep learning! Try again!';
+        }
+        function resetQuiz() {
+            document.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+            });
+            correctAnswers = 0;
+            document.getElementById('correctCount').textContent = '0';
+            document.getElementById('quizProgress').style.width = '0%';
+            document.getElementById('quizMessage').textContent = 'Answer all questions and submit to see results!';
+        }
+
+        // Tree Visualizer
+        let treeNodes = [];
+        function initTreeVisualizer() {
+            if (treeNodes.length === 0) {
+                treeNodes = [50, 30, 70, 20, 40, 60, 80];
+                renderTree();
+            }
+        }
+        function renderTree() {
+            const container = document.getElementById('treeVisualizer');
+            container.innerHTML = '';
+            const levelWidth = 80;
+            treeNodes.forEach((value, index) => {
+                const el = document.createElement('div');
+                el.style.cssText = `width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; position: relative;`;
+                el.textContent = value;
+                el.id = `tree-${index}`;
+                container.appendChild(el);
+            });
+            document.getElementById('treeNodeCount').textContent = treeNodes.length;
+        }
+        function insertTreeNode() {
+            const v = parseInt(document.getElementById('treeValue').value);
+            if (!isNaN(v) && treeNodes.length < 15) {
+                treeNodes.push(v);
+                treeNodes.sort((a, b) => a - b);
+                renderTree();
+            }
+        }
+        function deleteTreeNode() {
+            const v = parseInt(document.getElementById('treeValue').value);
+            if (!isNaN(v)) {
+                const idx = treeNodes.indexOf(v);
+                if (idx !== -1) {
+                    treeNodes.splice(idx, 1);
+                    renderTree();
+                }
+            }
+        }
+        function traverseInorder() {
+            const sorted = [...treeNodes].sort((a, b) => a - b);
+            document.getElementById('treeTraversal').textContent = sorted.join(' → ');
+        }
+        function traversePreorder() {
+            const arr = [...treeNodes];
+            document.getElementById('treeTraversal').textContent = arr.join(' → ');
+        }
+        function clearTree() {
+            treeNodes = [];
+            renderTree();
+            document.getElementById('treeTraversal').textContent = '-';
+        }
+
+        // Heap Visualizer (Max Heap)
+        let heapData = [];
+        function initHeapVisualizer() {
+            if (heapData.length === 0) {
+                heapData = [50, 30, 70, 20, 40, 60, 80];
+                heapify();
+                renderHeap();
+            }
+        }
+        function heapify() {
+            for (let i = Math.floor(heapData.length / 2) - 1; i >= 0; i--) {
+                siftDown(i);
+            }
+        }
+        function siftDown(i) {
+            let largest = i;
+            let left = 2 * i + 1;
+            let right = 2 * i + 2;
+            if (left < heapData.length && heapData[left] > heapData[largest]) largest = left;
+            if (right < heapData.length && heapData[right] > heapData[largest]) largest = right;
+            if (largest !== i) {
+                [heapData[i], heapData[largest]] = [heapData[largest], heapData[i]];
+                siftDown(largest);
+            }
+        }
+        function renderHeap() {
+            const container = document.getElementById('heapVisualizer');
+            container.innerHTML = '';
+            const maxVal = Math.max(...heapData, 1);
+            heapData.forEach(value => {
+                const el = document.createElement('div');
+                el.style.cssText = `width: 45px; height: 45px; background: linear-gradient(135deg, var(--accent), #f97316); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000;`;
+                el.textContent = value;
+                container.appendChild(el);
+            });
+            document.getElementById('heapSize').textContent = heapData.length;
+            document.getElementById('heapMax').textContent = heapData.length > 0 ? heapData[0] : '-';
+        }
+        function insertHeap() {
+            const v = parseInt(document.getElementById('heapValue').value);
+            if (!isNaN(v) && heapData.length < 10) {
+                heapData.push(v);
+                heapify();
+                renderHeap();
+            }
+        }
+        function extractMax() {
+            if (heapData.length > 0) {
+                const max = heapData[0];
+                heapData[0] = heapData[heapData.length - 1];
+                heapData.pop();
+                heapify();
+                renderHeap();
+                alert(`Extracted max: ${max}`);
+            }
+        }
+        function getMax() {
+            alert(heapData.length > 0 ? `Max: ${heapData[0]}` : 'Heap is empty');
+        }
+        function clearHeap() {
+            heapData = [];
+            renderHeap();
+        }
+
+        // Hash Table Visualizer
+        let hashTable = {};
+        let hashKeys = [];
+        const HASH_SIZE = 10;
+        function initHashVisualizer() {
+            hashTable = { '3': 'Value3', '7': 'Value7' };
+            hashKeys = ['3', '7'];
+            renderHash();
+        }
+        function renderHash() {
+            const container = document.getElementById('hashVisualizer');
+            container.innerHTML = '';
+            for (let i = 0; i < HASH_SIZE; i++) {
+                const bucket = document.createElement('div');
+                bucket.style.cssText = 'width: 60px; min-height: 50px; background: var(--bg-card); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 2px;';
+                bucket.innerHTML = `<div style="font-size: 0.7rem; color: var(--text-secondary); text-align: center;">${i}</div>`;
+                const key = i.toString();
+                if (hashTable[key]) {
+                    const item = document.createElement('div');
+                    item.style.cssText = 'background: var(--secondary); padding: 4px; border-radius: 4px; font-size: 0.8rem; text-align: center;';
+                    item.textContent = `${key}:${hashTable[key]}`;
+                    bucket.appendChild(item);
+                }
+                container.appendChild(bucket);
+            }
+            document.getElementById('hashCount').textContent = hashKeys.length;
+        }
+        function simpleHash(key) {
+            let sum = 0;
+            for (let i = 0; i < key.length; i++) {
+                sum += key.charCodeAt(i);
+            }
+            return sum % HASH_SIZE;
+        }
+        function insertHash() {
+            const key = document.getElementById('hashKey').value;
+            const value = document.getElementById('hashValue').value;
+            if (key && value) {
+                const index = simpleHash(key);
+                hashTable[index.toString()] = value;
+                if (!hashKeys.includes(index.toString())) {
+                    hashKeys.push(index.toString());
+                }
+                renderHash();
+                document.getElementById('hashStatus').textContent = `Inserted at index ${index}`;
+            }
+        }
+        function searchHash() {
+            const key = document.getElementById('hashKey').value;
+            if (key) {
+                const index = simpleHash(key);
+                const value = hashTable[index.toString()];
+                if (value) {
+                    document.getElementById('hashStatus').textContent = `Found: ${value} at index ${index}`;
+                } else {
+                    document.getElementById('hashStatus').textContent = 'Not found';
+                }
+            }
+        }
+        function deleteHash() {
+            const key = document.getElementById('hashKey').value;
+            if (key) {
+                const index = simpleHash(key);
+                if (hashTable[index.toString()]) {
+                    delete hashTable[index.toString()];
+                    hashKeys = hashKeys.filter(k => k !== index.toString());
+                    renderHash();
+                    document.getElementById('hashStatus').textContent = `Deleted from index ${index}`;
+                }
+            }
+        }
+        function clearHash() {
+            hashTable = {};
+            hashKeys = [];
+            renderHash();
+            document.getElementById('hashStatus').textContent = 'Cleared';
+        }
+
+        // Graph Visualizer
+        let graphNodes = [];
+        let graphEdges = [];
+        let nodePositions = {};
+        
+        function initGraphVisualizer() {
+            if (graphNodes.length === 0) {
+                graphNodes = [0, 1, 2, 3, 4];
+                graphEdges = [[0, 1], [0, 2], [1, 3], [1, 4], [2, 4]];
+                positionNodes();
+                renderGraph();
+            }
+        }
+        
+        function positionNodes() {
+            const canvas = document.getElementById('graphCanvas');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(canvas.width, canvas.height) / 3;
+            
+            graphNodes.forEach((node, i) => {
+                const angle = (2 * Math.PI * i) / graphNodes.length - Math.PI / 2;
+                nodePositions[node] = {
+                    x: centerX + radius * Math.cos(angle),
+                    y: centerY + radius * Math.sin(angle)
+                };
+            });
+        }
+        
+        function renderGraph() {
+            const canvas = document.getElementById('graphCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw edges
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 2;
+            graphEdges.forEach(edge => {
+                const n1 = nodePositions[edge[0]];
+                const n2 = nodePositions[edge[1]];
+                if (n1 && n2) {
+                    ctx.beginPath();
+                    ctx.moveTo(n1.x, n1.y);
+                    ctx.lineTo(n2.x, n2.y);
+                    ctx.stroke();
+                }
+            });
+            
+            // Draw nodes
+            graphNodes.forEach(node => {
+                const pos = nodePositions[node];
+                if (pos) {
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, 25, 0, 2 * Math.PI);
+                    ctx.fill = 'linear-gradient(135deg, var(--accent), #f97316)';
+                    ctx.fillStyle = '#f97316';
+                    ctx.fill();
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = '#000';
+                    ctx.font = 'bold 14px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(node, pos.x, pos.y);
+                }
+            });
+            
+            document.getElementById('graphNodeCount').textContent = graphNodes.length;
+            document.getElementById('graphEdgeCount').textContent = graphEdges.length;
+        }
+        
+        function addGraphNode() {
+            const newId = graphNodes.length > 0 ? Math.max(...graphNodes) + 1 : 0;
+            if (graphNodes.length < 8) {
+                graphNodes.push(newId);
+                positionNodes();
+                renderGraph();
+            }
+        }
+        
+        function addGraphEdge() {
+            const from = parseInt(document.getElementById('graphFrom').value);
+            const to = parseInt(document.getElementById('graphTo').value);
+            if (!isNaN(from) && !isNaN(to) && from !== to) {
+                if (graphNodes.includes(from) && graphNodes.includes(to)) {
+                    const exists = graphEdges.some(e => 
+                        (e[0] === from && e[1] === to) || (e[0] === to && e[1] === from)
+                    );
+                    if (!exists) {
+                        graphEdges.push([from, to]);
+                        renderGraph();
+                    }
+                }
+            }
+        }
+        
+        function runBFS() {
+            if (graphNodes.length === 0) return;
+            const start = graphNodes[0];
+            const visited = new Set();
+            const queue = [start];
+            const result = [];
+            visited.add(start);
+            
+            while (queue.length > 0) {
+                const node = queue.shift();
+                result.push(node);
+                
+                graphEdges.forEach(edge => {
+                    if (edge[0] === node && !visited.has(edge[1])) {
+                        visited.add(edge[1]);
+                        queue.push(edge[1]);
+                    } else if (edge[1] === node && !visited.has(edge[0])) {
+                        visited.add(edge[0]);
+                        queue.push(edge[0]);
+                    }
+                });
+            }
+            
+            document.getElementById('graphTraversal').textContent = result.join(' → ');
+        }
+        
+        function runDFS() {
+            if (graphNodes.length === 0) return;
+            const start = graphNodes[0];
+            const visited = new Set();
+            const result = [];
+            
+            function dfs(node) {
+                visited.add(node);
+                result.push(node);
+                
+                graphEdges.forEach(edge => {
+                    if (edge[0] === node && !visited.has(edge[1])) {
+                        dfs(edge[1]);
+                    } else if (edge[1] === node && !visited.has(edge[0])) {
+                        dfs(edge[0]);
+                    }
+                });
+            }
+            
+            dfs(start);
+            document.getElementById('graphTraversal').textContent = result.join(' → ');
+        }
+        
+        function clearGraph() {
+            graphNodes = [];
+            graphEdges = [];
+            nodePositions = {};
+            renderGraph();
+            document.getElementById('graphTraversal').textContent = '-';
+        }
+
+        // Update showSection to initialize new visualizers
+        const originalShowSection = showSection;
+        showSection = function(sectionId) {
+            originalShowSection(sectionId);
+            if (sectionId === 'tree') initTreeVisualizer();
+            if (sectionId === 'heap') initHeapVisualizer();
+            if (sectionId === 'hash') initHashVisualizer();
+            if (sectionId === 'graph') initGraphVisualizer();
+        };
+    </script>
+</body>
+</html>
